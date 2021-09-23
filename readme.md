@@ -1,2 +1,2 @@
 # music-visualizer    
-## a music visualizer using Unity/C#    
+### a music visualizer using Unity/C#    
