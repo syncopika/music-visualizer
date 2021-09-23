@@ -1,0 +1,3 @@
+music-visualizer project notes
+
+https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-real-time-audio-analysis-using-the-unity-api-6e9595823ce4
