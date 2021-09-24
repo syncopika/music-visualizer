@@ -9,10 +9,10 @@ public class audioVisualizer : MonoBehaviour
     public GameObject particle2;
     public AudioSource audioSrc;
 
-    private int sampleDataSize = 256;
+    private int sampleDataSize = 512;
 
-    private const float xCoord = -25.0f; // x coord of particles
-    private const float pointSpacing = 0.2f; //Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
+    private const float xCoord = -55.0f; // x coord of particles
+    private const float pointSpacing = 0.22f; //Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
     private const float zCoord = 3.0f; // z coord of particles
 
     private float[] outputData;
@@ -38,11 +38,11 @@ public class audioVisualizer : MonoBehaviour
 
         float log = rootMeanSquare / 0.1f == 0 ? 0 : Mathf.Log10(rootMeanSquare / 0.1f);
 
-        float newVol = 6 * log;
+        float newVol = 6f * log;
 
         float yIncrement = newVol / (samples.Length / 2);
 
-        for(int i = 0; i < points.Count; i++)
+        for(int i = 0; i < sampleDataSize; i++)
         {
             if (i <= points.Count / 2)
             {
@@ -60,9 +60,9 @@ public class audioVisualizer : MonoBehaviour
     // taking the output directly from getOutputData (which I think is just amplitude data?) and scaling it a bit to show a waveform based on volume
     private void displayWaveform(float[] samples, List<GameObject> points, float xStart, float spacing, string style)
     {
-        for(int i = 0; i < points.Count; i++)
+        for(int i = 0; i < sampleDataSize; i++)
         {
-            float sampleVal = samples[i] * 20;
+            float sampleVal = samples[i] * 20f;
 
             if (style == "move")
             {
@@ -77,21 +77,39 @@ public class audioVisualizer : MonoBehaviour
     }
 
     // when using samples from getSpectrumData
-    private void displaySpectrum(float[] samples, List<GameObject> points, string style)
+    private void displaySpectrum(float[] samples, List<GameObject> points)
     {
         float currPos = xCoord;
-        for (int i = 1; i < samples.Length - 1; i++)
+        for (int i = 0; i < sampleDataSize; i++)
         {
-            Vector3 v1 = new Vector3(currPos, Mathf.Log(samples[i - 1]) + 10, zCoord);
-            Vector3 v2 = new Vector3(currPos + pointSpacing, Mathf.Log(samples[i]) + 10, zCoord);
-
-            points[i - 1].transform.position = v1;
-            points[i].transform.position = v2;
-
-           // Debug.Log(Mathf.Log(samples[i]));
-
+            //Debug.Log(samples[i]);
+            float log = samples[i] == 0 ? 0 : Mathf.Log10(samples[i]);
+            points[i].transform.position = new Vector3(currPos, log, zCoord);
             currPos += pointSpacing;
         }
+    }
+
+    // select a range of frequencies to keep track of and how loud those frequencies are
+    private void displaySpectrum2(float[] spectrumData, List<GameObject> points, float freqRangeMin, float freqRangeMax)
+    {
+        int sampleRate = AudioSettings.outputSampleRate;
+        int freqMax = sampleRate / 2; // this is the max supported frequency in our data
+        float freqPerIndex = freqMax / sampleDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
+
+        int targetIndexMin = (int)(freqRangeMin / freqPerIndex);
+        int targetIndexMax = (int)Math.Min(spectrumData.Length - 1, freqRangeMax / freqPerIndex);
+        //Debug.Log("min: " + targetIndexMin + ", max: " + targetIndexMax);
+
+        for(int i = targetIndexMin; i < targetIndexMax; i++)
+        {
+            //Debug.Log(Mathf.Log10(spectrumData[i]));
+            points[i].transform.position = new Vector3(
+                points[i].transform.position.x,
+                -1*Mathf.Log10(spectrumData[i]),
+                points[i].transform.position.z
+            );
+        }
+
     }
 
     // Start is called before the first frame update
@@ -105,7 +123,7 @@ public class audioVisualizer : MonoBehaviour
         spectrumData = new float[sampleDataSize];
 
         float currPos = xCoord;
-        for(int i = 0; i < sampleDataSize - 1; i++)
+        for(int i = 0; i < sampleDataSize; i++)
         {
             GameObject newPoint = Instantiate(particle, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
             newPoint.transform.localScale = new Vector3(0.2f, 1, 1);
@@ -125,7 +143,8 @@ public class audioVisualizer : MonoBehaviour
     void Update()
     {
         AudioListener.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
-        displaySpectrum(spectrumData, pointObjectsSpectrum, "");
+        //displaySpectrum(spectrumData, pointObjectsSpectrum);
+        displaySpectrum2(spectrumData, pointObjectsSpectrum, 50f, 24000f);
 
         AudioListener.GetOutputData(outputData, 0);
         //displayWaveform(outputData, pointObjectsOutput, xCoord, pointSpacing, "stretch");
