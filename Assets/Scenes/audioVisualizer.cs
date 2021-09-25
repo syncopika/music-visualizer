@@ -11,45 +11,58 @@ public class audioVisualizer : MonoBehaviour
 
 	// should be power of 2
     private int sampleOutputDataSize = 512;
-	private int sampleSpectrumDataSize = 256;
+	private int sampleSpectrumDataSize = 512;
 
     private const float xCoordOutputData = -55.0f;   // x coord of particles
-	private const float xCoordSpectrumData = -15.0f; // x coord of particles
+	private const float xCoordSpectrumData = -35.0f; // x coord of particles
     private const float pointSpacing = 0.22f;        //Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
     private const float zCoord = 3.0f;               // z coord of particles
 
     private float[] outputData;
     private float[] spectrumData;
+	private float[] prevSpectrumData;
 
     private List<GameObject> pointObjectsOutput;
     private List<GameObject> pointObjectsSpectrum;
     private List<GameObject> pointObjectsVolume;
 	
 	// create only particles for the frequency range we're interested in
-	private void setupSpectrumDataPoints(int desiredFreqMin, int desiredFreqMax, float[] spectrumData, List<GameObject> points){
+	private void setupSpectrumDataPoints(int desiredFreqMin, int desiredFreqMax, float[] spectrumData, List<GameObject> points, string style){
 		int sampleRate = AudioSettings.outputSampleRate;
         int freqMax = sampleRate / 2; // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleSpectrumDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
+		
+		Debug.Log("sample rate: " + sampleRate);
+		Debug.Log("max supported frequency in data: " + freqMax);
+		Debug.Log("freq per bin: " + freqPerIndex);
 		
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(spectrumData.Length - 1, desiredFreqMax / freqPerIndex);
 		
 		int numFreqBands = (targetIndexMax - targetIndexMin);
-		//float currPos = xCoordSpectrumData;
-		float radius = 12f;
-		float angleStart = 0f;
-		float angleIncrement = 360f / numFreqBands;
 		
-		for(int i = 0; i < numFreqBands; i++){
-			// arrange in a circle
-			float xCurr = radius*Mathf.Cos(angleStart);
-			float yCurr = radius*Mathf.Sin(angleStart);
+		if(style == "circle"){
+			float radius = 12f;
+			float angleStart = 0f;
+			float angleIncrement = 360f / numFreqBands;
 			
-			GameObject newPoint = Instantiate(particle2, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, angleStart));
-            points.Add(newPoint);
-			
-			angleStart += angleIncrement;
-			//currPos += pointSpacing;
+			for(int i = 0; i < numFreqBands; i++){
+				// arrange in a circle
+				float xCurr = radius*Mathf.Cos(angleStart);
+				float yCurr = radius*Mathf.Sin(angleStart);
+				
+				GameObject newPoint = Instantiate(particle2, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, angleStart));
+				points.Add(newPoint);
+				
+				angleStart += angleIncrement;
+			}
+		}else{
+			float currPos = xCoordSpectrumData;
+			for(int i = 0; i < numFreqBands; i++){
+				GameObject newPoint = Instantiate(particle2, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
+				points.Add(newPoint);
+				currPos += 1.1f;
+			}
 		}
 	}
 
@@ -135,14 +148,22 @@ public class audioVisualizer : MonoBehaviour
             //Debug.Log(Mathf.Log10(spectrumData[i]));
             points[particleIndex].transform.localScale = new Vector3(
                 1,
-                -Mathf.Log10(spectrumData[i]),
+                Math.Abs((-1*Mathf.Log10(prevSpectrumData[i])) - (-1*Mathf.Log10(spectrumData[i])))*2.0f,
 				1
             );
-			Debug.Log("bin: " + i + ", value: " + Mathf.Log10(spectrumData[i]));
+			//Debug.Log("bin: " + i + ", value: " + Mathf.Log10(spectrumData[i]));
 			particleIndex++;
         }
-		Debug.Log("---------");
+		
+		spectrumData.CopyTo(prevSpectrumData, 0);
+		//Debug.Log("---------");
     }
+	
+	private void prefill(float[] arr, float val){
+		for(int i = 0; i < arr.Length; i++){
+			arr[i] = val;
+		}
+	}
 
     // Start is called before the first frame update
     void Start()
@@ -153,7 +174,9 @@ public class audioVisualizer : MonoBehaviour
 
         outputData = new float[sampleOutputDataSize];
         spectrumData = new float[sampleSpectrumDataSize];
-
+		prevSpectrumData = new float[sampleSpectrumDataSize];
+		prefill(prevSpectrumData, 1.0f);
+		
 		// for output data
         float currPos = xCoordOutputData;
         for(int i = 0; i < sampleOutputDataSize; i++)
@@ -177,7 +200,7 @@ public class audioVisualizer : MonoBehaviour
 		//	currPos2 += pointSpacing;
 		//}
 		
-		setupSpectrumDataPoints(50, 3000, spectrumData, pointObjectsSpectrum);
+		setupSpectrumDataPoints(50, 3000, spectrumData, pointObjectsSpectrum, "");
     }
 	
     // Update is called once per frame
