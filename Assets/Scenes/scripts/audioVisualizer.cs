@@ -27,47 +27,30 @@ public class audioVisualizer : MonoBehaviour
 	
 	// create only particles for the frequency range we're interested in
 	private void setupSpectrumDataPoints(float[] spectrumData, List<GameObject> points, string style){
-		int sampleRate = AudioSettings.outputSampleRate;
+        int sampleRate = AudioSettings.outputSampleRate;
         int freqMax = sampleRate / 2; // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleSpectrumDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
 		
-		Debug.Log("sample rate: " + sampleRate);
-		Debug.Log("max supported frequency in data: " + freqMax);
-		Debug.Log("freq per bin: " + freqPerIndex);
+        Debug.Log("sample rate: " + sampleRate);
+        Debug.Log("max supported frequency in data: " + freqMax);
+        Debug.Log("freq per bin: " + freqPerIndex);
 		
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(spectrumData.Length - 1, desiredFreqMax / freqPerIndex);
-		int numFreqBands = targetIndexMax - targetIndexMin;
+        int numFreqBands = targetIndexMax - targetIndexMin;
 		
-		if(style == "circle"){
-			float radius = 12f;
-			float currAngle = 0f;
-			float angleIncrement = 360f / numFreqBands;
-			
-			for(int i = 0; i < numFreqBands; i++){
-				// arrange in a circle
-				float xCurr = radius*Mathf.Cos(currAngle*(float)(Math.PI / 180f)); // radians
-				float yCurr = radius*Mathf.Sin(currAngle*(float)(Math.PI / 180f)); // radians
-				
-				GameObject newPoint = Instantiate(particle2, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
-				newPoint.name = ("spectrumPoint_" + i);
-
-                // change color for each freq band
-                float fraction = (float)i / numFreqBands;
-                Renderer r = newPoint.GetComponent<Renderer>();
-                Vector4 color = r.material.color;
-                r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
-
-                points.Add(newPoint);
-
-				currAngle += angleIncrement;
-			}
-		}else{
-			float currPos = xCoordSpectrumData;
-			
-			for(int i = 0; i < numFreqBands; i++){
-				GameObject newPoint = Instantiate(particle2, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
-				newPoint.name = ("spectrumPoint_" + i);
+        if(style == "circle"){
+            float radius = 12f;
+            float currAngle = 0f;
+            float angleIncrement = 360f / numFreqBands;
+            
+            for(int i = 0; i < numFreqBands; i++){
+                // arrange in a circle
+                float xCurr = radius*Mathf.Cos(currAngle*(float)(Math.PI / 180f)); // radians
+                float yCurr = radius*Mathf.Sin(currAngle*(float)(Math.PI / 180f));
+                
+                GameObject newPoint = Instantiate(particle2, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
+                newPoint.name = ("spectrumPoint_" + i);
                 
                 // change color for each freq band
                 float fraction = (float)i / numFreqBands;
@@ -76,17 +59,33 @@ public class audioVisualizer : MonoBehaviour
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
                 points.Add(newPoint);
-				currPos += 1.1f;
+                currAngle += angleIncrement;
+            }
+        }else{
+            float currPos = xCoordSpectrumData;
+            
+            for(int i = 0; i < numFreqBands; i++){
+                GameObject newPoint = Instantiate(particle2, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
+                newPoint.name = ("spectrumPoint_" + i);
+
+                // change color for each freq band
+                float fraction = (float)i / numFreqBands;
+                Renderer r = newPoint.GetComponent<Renderer>();
+                Vector4 color = r.material.color;
+                r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
+
+                points.Add(newPoint);
+                currPos += 1.1f;
 			}
 		}
 	}
 
     private float calculateRMS(float[] samples)
     {
-		float sum = 0f;
-		for(int i = 0; i < samples.Length; i++){
-			sum += (samples[i] * samples[i]);
-		}
+        float sum = 0f;
+        for(int i = 0; i < samples.Length; i++){
+            sum += (samples[i] * samples[i]);
+        }
         return Mathf.Sqrt(sum / samples.Length);
 	}
 
@@ -154,18 +153,18 @@ public class audioVisualizer : MonoBehaviour
 
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(spectrumData.Length - 1, desiredFreqMax / freqPerIndex);
-		
-		int particleIndex = 0;
+        
+        int particleIndex = 0;
         for(int i = targetIndexMin; i < targetIndexMax; i++)
         {
-			Transform currTransform = points[particleIndex].transform;
+            Transform currTransform = points[particleIndex].transform;
             float binValDelta = Math.Abs( Math.Abs(Mathf.Log10(prevSpectrumData[i])) - Math.Abs(Mathf.Log10(spectrumData[i])) );
-			
-			// asve the current rotation
-			Quaternion prevRot = currTransform.rotation;
-			
-			// set rotation to normal so we can scale along one axis properly
-			currTransform.rotation = Quaternion.identity;
+            
+            // save the current rotation
+            Quaternion prevRot = currTransform.rotation;
+            
+            // set rotation to normal so we can scale along one axis properly
+            currTransform.rotation = Quaternion.identity;
 
             // scale it
             if (style == "circle")
@@ -184,12 +183,12 @@ public class audioVisualizer : MonoBehaviour
                     1
                 );
             }
-			
-			// put back the rotation
-			currTransform.rotation = prevRot;
-			
-			particleIndex++;
-			//Debug.Log("bin: " + i + ", value: " + Mathf.Log10(spectrumData[i]));
+            
+            // put back the rotation
+            currTransform.rotation = prevRot;
+            
+            particleIndex++;
+            //Debug.Log("bin: " + i + ", value: " + Mathf.Log10(spectrumData[i]));
         }
 		
 		spectrumData.CopyTo(prevSpectrumData, 0);
@@ -209,8 +208,8 @@ public class audioVisualizer : MonoBehaviour
 
         outputData = new float[sampleOutputDataSize];
         spectrumData = new float[sampleSpectrumDataSize];
-		prevSpectrumData = new float[sampleSpectrumDataSize];
-		prefill(prevSpectrumData, 1.0f); // fill with 1 so we take Log10(1.0) initially and won't have issues (otherwise we'd do Log10(0) which would be a problem)
+        prevSpectrumData = new float[sampleSpectrumDataSize];
+        prefill(prevSpectrumData, 1.0f); // fill with 1 so we take Log10(1.0) initially and won't have issues (otherwise we'd do Log10(0) which would be a problem)
 		
 		// for output data
         float currPos = xCoordOutputData;
@@ -223,8 +222,8 @@ public class audioVisualizer : MonoBehaviour
 			
             currPos += pointSpacing;
         }
-		
-		setupSpectrumDataPoints(spectrumData, pointObjectsSpectrum, "circle");
+        
+        setupSpectrumDataPoints(spectrumData, pointObjectsSpectrum, "circle");
     }
 	
     // Update is called once per frame
