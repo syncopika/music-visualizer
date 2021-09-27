@@ -24,9 +24,27 @@ public class audioVisualizer : MonoBehaviour
 
     private List<GameObject> pointObjectsOutput;
     private List<GameObject> pointObjectsSpectrum;
-	
-	// create only particles for the frequency range we're interested in
-	private void setupSpectrumDataPoints(float[] spectrumData, List<GameObject> points, string style){
+
+    private float calculateRMS(float[] samples)
+    {
+        float sum = 0f;
+        for (int i = 0; i < samples.Length; i++)
+        {
+            sum += (samples[i] * samples[i]);
+        }
+        return Mathf.Sqrt(sum / samples.Length);
+    }
+
+    private void prefill(float[] arr, float val)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = val;
+        }
+    }
+
+    // create only particles for the frequency range we're interested in
+    private void setupSpectrumDataPoints(float[] spectrumData, List<GameObject> points, string style){
         int sampleRate = AudioSettings.outputSampleRate;
         int freqMax = sampleRate / 2; // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleSpectrumDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
@@ -80,14 +98,19 @@ public class audioVisualizer : MonoBehaviour
 		}
 	}
 
-    private float calculateRMS(float[] samples)
+    private void setupOutputDataPoints(List<GameObject> points)
     {
-        float sum = 0f;
-        for(int i = 0; i < samples.Length; i++){
-            sum += (samples[i] * samples[i]);
+        float currPos = xCoordOutputData;
+        for (int i = 0; i < sampleOutputDataSize; i++)
+        {
+            GameObject newPoint = Instantiate(particle, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
+            newPoint.name = ("outputPoint_" + i);
+            newPoint.transform.localScale = new Vector3(0.2f, 1, 1);
+            points.Add(newPoint);
+
+            currPos += pointSpacing;
         }
-        return Mathf.Sqrt(sum / samples.Length);
-	}
+    }
 
     // display volume when using samples from getOutputData
     private void displayVolumeinDb(float[] samples, List<GameObject> points, float xStart, float spacing)
@@ -101,7 +124,7 @@ public class audioVisualizer : MonoBehaviour
         {
             if (i <= points.Count / 2)
             {
-                points[i].transform.position = new Vector3(xStart, (float)newVol*((i+1)*yIncrement), zCoord);
+                points[i].transform.position = new Vector3(xStart, (float)newVol * ((i+1) * yIncrement), zCoord);
             }
             else
             {
@@ -193,12 +216,6 @@ public class audioVisualizer : MonoBehaviour
 		
 		spectrumData.CopyTo(prevSpectrumData, 0);
     }
-	
-	private void prefill(float[] arr, float val){
-		for(int i = 0; i < arr.Length; i++){
-			arr[i] = val;
-		}
-	}
 
     // Start is called before the first frame update
     void Start()
@@ -210,19 +227,8 @@ public class audioVisualizer : MonoBehaviour
         spectrumData = new float[sampleSpectrumDataSize];
         prevSpectrumData = new float[sampleSpectrumDataSize];
         prefill(prevSpectrumData, 1.0f); // fill with 1 so we take Log10(1.0) initially and won't have issues (otherwise we'd do Log10(0) which would be a problem)
-		
-		// for output data
-        float currPos = xCoordOutputData;
-        for(int i = 0; i < sampleOutputDataSize; i++)
-        {
-            GameObject newPoint = Instantiate(particle, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
-            newPoint.name = ("outputPoint_" + i);
-            newPoint.transform.localScale = new Vector3(0.2f, 1, 1);
-            pointObjectsOutput.Add(newPoint);
-			
-            currPos += pointSpacing;
-        }
-        
+
+        setupOutputDataPoints(pointObjectsOutput);
         setupSpectrumDataPoints(spectrumData, pointObjectsSpectrum, "circle");
     }
 	
