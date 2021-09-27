@@ -1,8 +1,0 @@
-music-visualizer project notes
-
-https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-real-time-audio-analysis-using-the-unity-api-6e9595823ce4
-
-https://medium.com/giant-scam/algorithmic-beat-mapping-in-unity-preprocessed-audio-analysis-d41c339c135a
-https://forum.unity.com/threads/what-is-spectrum-data-audio-getspectrumdata.204060/
-https://answers.unity.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.html
-https://answers.unity.com/questions/472188/what-does-getoutputdata-sample-float-represent.html
