@@ -18,12 +18,15 @@ public class audioVisualizer : MonoBehaviour
     private const int desiredFreqMin = 50;
     private const int desiredFreqMax = 2000;
 
+    private const float interval = 0.05f; // time interval in sec for a data point object to scale towards a value
+
     private float[] outputData;
     private float[] spectrumData;
     private float[] prevSpectrumData;
 
     private List<GameObject> pointObjectsOutput;
     private List<GameObject> pointObjectsSpectrum;
+    private List<bool> pointObjectsSpectrumFlag; // keep track of which objects are scaling up based on spectrum data
 
     private float calculateRMS(float[] samples)
     {
@@ -58,7 +61,7 @@ public class audioVisualizer : MonoBehaviour
         int numFreqBands = targetIndexMax - targetIndexMin;
 		
         if(style == "circle"){
-            float radius = 12f;
+            float radius = 15f;
             float currAngle = 0f;
             float angleIncrement = 360f / numFreqBands;
             
@@ -77,6 +80,7 @@ public class audioVisualizer : MonoBehaviour
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
                 points.Add(newPoint);
+                pointObjectsSpectrumFlag.Add(false); // for knowing if the object is currently scaling up to some value
                 currAngle += angleIncrement;
             }
         }else{
@@ -167,6 +171,24 @@ public class audioVisualizer : MonoBehaviour
         }
     }
 
+    // https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
+    private IEnumerator scaleToTarget(Transform obj, Vector3 target, int objIndex)
+    {
+        Vector3 initialScale = obj.localScale;
+        Vector3 currScale = obj.localScale;
+        float _timer = 0f;
+
+        while(currScale != target)
+        {
+            currScale = Vector3.Lerp(initialScale, target, _timer / interval);
+            obj.localScale = currScale;
+            _timer += Time.deltaTime;
+
+            yield return null;
+        }
+        pointObjectsSpectrumFlag[objIndex] = false;
+    }
+
     // select a range of frequencies to keep track of and how loud those frequencies are
     private void displaySpectrum2(float[] spectrumData, List<GameObject> points, string style)
     {
@@ -181,7 +203,7 @@ public class audioVisualizer : MonoBehaviour
         for(int i = targetIndexMin; i < targetIndexMax; i++)
         {
             Transform currTransform = points[particleIndex].transform;
-            float binValDelta = Math.Abs( Math.Abs(Mathf.Log10(prevSpectrumData[i])) - Math.Abs(Mathf.Log10(spectrumData[i])) );
+            float binValDelta = Mathf.Log10(spectrumData[i]) - Mathf.Log10(prevSpectrumData[i]);
             
             // save the current rotation
             Quaternion prevRot = currTransform.rotation;
@@ -192,19 +214,21 @@ public class audioVisualizer : MonoBehaviour
             // scale it
             if (style == "circle")
             {
-                currTransform.localScale = new Vector3(
-                    -2 * binValDelta,
-                    1,
-                    1
-                );
+               // Debug.Log(3 * binValDelta);
+                if (2 * binValDelta > 0 && pointObjectsSpectrumFlag[particleIndex] == false)
+                {
+                    pointObjectsSpectrumFlag[particleIndex] = true;
+                    StartCoroutine(
+                        scaleToTarget(currTransform, new Vector3(3 * binValDelta + 0.1f, 1, 1), particleIndex)
+                    );
+                }
+
+                // the target object will always scale down to 0.1,1,1 (baseline scale) by default
+                currTransform.localScale = Vector3.Lerp(currTransform.localScale, new Vector3(0.1f, 1, 1), 5 * Time.deltaTime);
             }
             else
             {
-                currTransform.localScale = new Vector3(
-                    1,
-                    -2 * binValDelta,
-                    1
-                );
+                currTransform.localScale = new Vector3(1, -2 * binValDelta, 1);
             }
             
             // put back the rotation
@@ -222,6 +246,7 @@ public class audioVisualizer : MonoBehaviour
     {
         pointObjectsSpectrum = new List<GameObject>();
         pointObjectsOutput = new List<GameObject>();
+        pointObjectsSpectrumFlag = new List<bool>();
 
         outputData = new float[sampleOutputDataSize];
         spectrumData = new float[sampleSpectrumDataSize];
