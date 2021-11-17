@@ -6,10 +6,10 @@ using UnityEngine;
 public class spectrumVisualizer : MonoBehaviour
 {
     public GameObject particle; // the gameobject to use to represent a spectrum data point
+    public float lerpInterval = 0.05f; // time interval in sec for a data point object to scale towards a value
     //public AudioSource audioSrc;
 
     private const int sampleDataSize = 512;  // power of 2
-    private const float interval = 0.05f; // time interval in sec for a data point object to scale towards a value
     private const int desiredFreqMin = 50;
     private const int desiredFreqMax = 2000;
 
@@ -94,17 +94,18 @@ public class spectrumVisualizer : MonoBehaviour
     }
 
     // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
-    private IEnumerator scaleToTarget(Transform obj, Vector3 target, int objIndex)
+    private IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex)
     {
-        Vector3 initialScale = obj.localScale;
-        Vector3 currScale = obj.localScale;
-        float _timer = 0f;
+        Transform trans = obj.transform;
+        Vector3 initialScale = trans.localScale;
+        Vector3 currScale = trans.localScale;
+        float timer = 0f;
 
         while (currScale != target)
         {
-            currScale = Vector3.Lerp(initialScale, target, _timer / interval);
-            obj.localScale = currScale;
-            _timer += Time.deltaTime;
+            currScale = Vector3.Lerp(initialScale, target, timer / lerpInterval);
+            trans.localScale = currScale;
+            timer += Time.deltaTime;
 
             yield return null;
         }
@@ -124,7 +125,7 @@ public class spectrumVisualizer : MonoBehaviour
         for (int i = targetIndexMin; i < targetIndexMax; i++)
         {
             Transform currTransform = pointObjects[particleIndex].transform;
-            float binValDelta = 80*(spectrumData[i] - prevSpectrumData[i]);
+            float binValDelta = 90*(spectrumData[i] - prevSpectrumData[i]);
             float baseline = 0.1f;
 
             // save the current rotation
@@ -141,7 +142,7 @@ public class spectrumVisualizer : MonoBehaviour
                 {
                     pointObjectsFlag[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(currTransform, new Vector3(binValDelta, 1, 1), particleIndex)
+                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta, 1, 1), particleIndex)
                     );
                 }
 
@@ -155,7 +156,7 @@ public class spectrumVisualizer : MonoBehaviour
                 {
                     pointObjectsFlag[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(currTransform, new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex)
+                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex)
                     );
                 }
 

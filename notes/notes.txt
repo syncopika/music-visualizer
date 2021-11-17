@@ -9,3 +9,4 @@ https://answers.unity.com/questions/472188/what-does-getoutputdata-sample-float-
 https://dsp.stackexchange.com/questions/14765/adequate-representation-of-frequency-domain-amplitude-magnitude-of-fft-of-a-sign
 https://365xr.blog/hololens-and-unity-tip-001-scaling-of-rotated-gameobjects/
 https://www.youtube.com/watch?v=PzVbaaxgPco -> Unity3D How To: Audio Visualizer With Spectrum Data
+https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-always-white.html
