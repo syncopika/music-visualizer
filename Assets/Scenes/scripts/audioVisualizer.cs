@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class audioVisualizer : MonoBehaviour
+public class AudioVisualizer : MonoBehaviour
 {
     public GameObject particle;
     public float lerpInterval = 0.05f;
-    //public AudioSource audioSrc;
+    public GameObject audioSrcParent;
+
+    private AudioSource audioSrc;
 
     private const int sampleOutputDataSize = 512;    // power of 2
     private const float xCoordOutputData = -55.0f;   // x coord of particles
@@ -163,6 +165,7 @@ public class audioVisualizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSrc = audioSrcParent.GetComponent<AudioSource>();
         pointObjectsOutput = new List<GameObject>();
         pointObjectsFlag = new List<bool>();
         outputData = new float[sampleOutputDataSize];
@@ -172,7 +175,7 @@ public class audioVisualizer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        AudioListener.GetOutputData(outputData, 0);
+        audioSrc.GetOutputData(outputData, 0);
         //displayWaveform(outputData, pointObjectsOutput, pointObjectsFlag, xCoordOutputData, pointSpacing, "stretch");
         displayWaveform(outputData, pointObjectsOutput, pointObjectsFlag, xCoordOutputData, pointSpacing, "move");
     }

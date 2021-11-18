@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class spectrumVisualizer : MonoBehaviour
+public class SpectrumVisualizer : MonoBehaviour
 {
     public GameObject particle; // the gameobject to use to represent a spectrum data point
     public float lerpInterval = 0.05f; // time interval in sec for a data point object to scale towards a value
-    //public AudioSource audioSrc;
+    public GameObject audioSrcParent;
+
+    private AudioSource audioSrc;
 
     private const int sampleDataSize = 512;  // power of 2
     private const int desiredFreqMin = 50;
@@ -175,6 +177,7 @@ public class spectrumVisualizer : MonoBehaviour
     }
     void Start()
     {
+        audioSrc = audioSrcParent.GetComponent<AudioSource>();
         spectrumData = new float[sampleDataSize];
         prevSpectrumData = new float[sampleDataSize];
 
@@ -190,7 +193,7 @@ public class spectrumVisualizer : MonoBehaviour
 
     void Update()
     {
-        AudioListener.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+        audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
     }
 }
