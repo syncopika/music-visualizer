@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 895553607}
   - component: {fileID: 895553606}
   m_Layer: 0
-  m_Name: GameObject - mainAudioSrc
+  m_Name: mainAudioSrc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -486,7 +486,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -686,29 +686,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1577950332}
-  - component: {fileID: 1577950333}
+  - component: {fileID: 1577950331}
   m_Layer: 0
-  m_Name: GameObject - volumeViz
+  m_Name: volumeViz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1577950332
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1577950330}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.43, y: 1.6935859, z: -1.26}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1577950333
+--- !u!114 &1577950331
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -723,6 +709,20 @@ MonoBehaviour:
   particle: {fileID: 2126597466}
   lerpInterval: 0.05
   audioSrcParent: {fileID: 895553605}
+--- !u!4 &1577950332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577950330}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.43, y: 1.6935859, z: -1.26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1673674340
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +735,6 @@ GameObject:
   - component: {fileID: 1673674343}
   - component: {fileID: 1673674342}
   - component: {fileID: 1673674341}
-  - component: {fileID: 1673674345}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -820,14 +819,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: -90}
---- !u!81 &1673674345
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673674340}
-  m_Enabled: 1
 --- !u!1 &1779460757
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,7 +830,7 @@ GameObject:
   - component: {fileID: 1779460759}
   - component: {fileID: 1779460758}
   m_Layer: 0
-  m_Name: GameObject - spectrumViz
+  m_Name: spectrumViz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
