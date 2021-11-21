@@ -12,19 +12,68 @@ public class Visualizer : MonoBehaviour
     public int desiredFreqMin = 50;
     public int desiredFreqMax = 2000;
 
-    private AudioSource audioSrc;
-    private float[] audioData;
-   // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data
+    protected AudioSource audioSrc;
+    protected float[] audioData;
+    // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data
 
-    private List<GameObject> pointObjects;
-    private List<bool> pointObjectsFlag; // keep track of which objects are scaling up based on spectrum data
+    protected List<GameObject> pointObjects;
+    protected List<bool> pointObjectsFlag; // keep track of which objects are scaling up based on audio data
 
 
     // provide utility functions
 
+    // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
+    protected IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
+    {
+        Transform trans = obj.transform;
+        Vector3 initialScale = trans.localScale;
+        Vector3 currScale = trans.localScale;
+        float timer = 0f;
+
+        while (currScale != target)
+        {
+            currScale = Vector3.Lerp(initialScale, target, timer / lerpInterval);
+            trans.localScale = currScale;
+            timer += Time.deltaTime;
+
+            obj.GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, timer / lerpInterval);
+
+            yield return null;
+        }
+        pointObjectsFlag[objIndex] = false;
+    }
+
+    protected IEnumerator moveToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
+    {
+        Transform trans = obj.transform;
+        Vector3 initialPos = trans.position;
+        Vector3 currPos = trans.position;
+
+        float timer = 0f;
+
+        while (currPos != target)
+        {
+            currPos = Vector3.Lerp(initialPos, target, timer / lerpInterval);
+            trans.position = currPos;
+            timer += Time.deltaTime;
+
+            obj.GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, timer / lerpInterval);
+
+            yield return null;
+        }
+        pointObjectsFlag[objIndex] = false;
+    }
+
+    protected void prefill(float[] arr, float val)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = val;
+        }
+    }
 
     // Start is called before the first frame update
-    void Start()
+    public virtual void Start()
     {
         // intialize stuff
         audioSrc = audioSrcParent.GetComponent<AudioSource>();
@@ -32,11 +81,5 @@ public class Visualizer : MonoBehaviour
         //prevAudioData = new float[sampleDataSize];
         pointObjects = new List<GameObject>();
         pointObjectsFlag = new List<bool>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

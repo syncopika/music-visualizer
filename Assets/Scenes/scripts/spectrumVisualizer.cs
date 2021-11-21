@@ -3,32 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpectrumVisualizer : MonoBehaviour
+public class SpectrumVisualizer : Visualizer
 {
-    public GameObject particle; // the gameobject to use to represent a spectrum data point
-    public float lerpInterval = 0.05f; // time interval in sec for a data point object to scale towards a value
-    public GameObject audioSrcParent;
-
-    private AudioSource audioSrc;
-
-    private const int sampleDataSize = 512;  // power of 2
-    private const int desiredFreqMin = 50;
-    private const int desiredFreqMax = 2000;
-
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
-
-    private List<GameObject> pointObjects;
-    private List<bool> pointObjectsFlag; // keep track of which objects are scaling up based on spectrum data
     private string visualizationStyle;
-
-    private void prefill(float[] arr, float val)
-    {
-        for (int i = 0; i < arr.Length; i++)
-        {
-            arr[i] = val;
-        }
-    }
 
     private void setupSpectrumDataPoints()
     {
@@ -95,25 +74,6 @@ public class SpectrumVisualizer : MonoBehaviour
         }
     }
 
-    // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
-    private IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex)
-    {
-        Transform trans = obj.transform;
-        Vector3 initialScale = trans.localScale;
-        Vector3 currScale = trans.localScale;
-        float timer = 0f;
-
-        while (currScale != target)
-        {
-            currScale = Vector3.Lerp(initialScale, target, timer / lerpInterval);
-            trans.localScale = currScale;
-            timer += Time.deltaTime;
-
-            yield return null;
-        }
-        pointObjectsFlag[objIndex] = false;
-    }
-
     public void displaySpectrum(float[] spectrumData)
     {
         int sampleRate = AudioSettings.outputSampleRate;
@@ -136,7 +96,9 @@ public class SpectrumVisualizer : MonoBehaviour
             // set rotation to normal so we can scale along one axis properly
             currTransform.rotation = Quaternion.identity;
 
-            // scale it
+            // scale it based on spectrum bin value
+            Color currColor = pointObjects[particleIndex].GetComponent<Renderer>().material.color;
+
             if (visualizationStyle == "circle")
             {
                 // circular pattern
@@ -144,7 +106,7 @@ public class SpectrumVisualizer : MonoBehaviour
                 {
                     pointObjectsFlag[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta, 1, 1), particleIndex)
+                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta, 1, 1), particleIndex, currColor, currColor)
                     );
                 }
 
@@ -158,7 +120,7 @@ public class SpectrumVisualizer : MonoBehaviour
                 {
                     pointObjectsFlag[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex)
+                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex, currColor, currColor)
                     );
                 }
 
@@ -170,24 +132,17 @@ public class SpectrumVisualizer : MonoBehaviour
             currTransform.rotation = prevRot;
 
             particleIndex++;
-            //Debug.Log("bin: " + i + ", value: " + Mathf.Log10(spectrumData[i]));
         }
 
         spectrumData.CopyTo(prevSpectrumData, 0);
     }
-    void Start()
+    public override void Start()
     {
-        audioSrc = audioSrcParent.GetComponent<AudioSource>();
-        spectrumData = new float[sampleDataSize];
+        base.Start();
+        spectrumData = audioData;
         prevSpectrumData = new float[sampleDataSize];
-
         visualizationStyle = "circle";
-        
-        pointObjects = new List<GameObject>();
-        pointObjectsFlag = new List<bool>();
-
-        prefill(prevSpectrumData, 1.0f); // fill with 1 so we take Log10(1.0) initially and won't have issues (otherwise we'd do Log10(0) which would be a problem)
-
+        prefill(prevSpectrumData, 0.0f);
         setupSpectrumDataPoints();
     }
 

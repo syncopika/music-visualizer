@@ -3,22 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioVisualizer : MonoBehaviour
+public class AudioVisualizer : Visualizer
 {
-    public GameObject particle;
-    public float lerpInterval = 0.05f;
-    public GameObject audioSrcParent;
-
-    private AudioSource audioSrc;
-
     private const int sampleOutputDataSize = 512;    // power of 2
     private const float xCoordOutputData = -55.0f;   // x coord of particles
     private const float pointSpacing = 0.22f;        // Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
     private const float zCoord = 3.0f;               // z coord of particles
-
     private float[] outputData;
-    private List<GameObject> pointObjectsOutput;
-    private List<bool> pointObjectsFlag;
 
     private float calculateRMS(float[] samples)
     {
@@ -68,59 +59,7 @@ public class AudioVisualizer : MonoBehaviour
         }
     }
 
-    private IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex)
-    {
-        Transform trans = obj.transform;
-        Vector3 initialScale = trans.localScale;
-        Vector3 currScale = trans.localScale;
 
-        // TODO: make this a public variable?
-        Vector3 baseColor = new Vector3(142, 248, 50);
-        Vector3 maxColor = new Vector3(178, 252, 114);
-
-        float timer = 0f;
-
-        while (currScale != target)
-        {
-            currScale = Vector3.Lerp(initialScale, target, timer / lerpInterval);
-
-            Vector3 newColor = Vector3.Lerp(baseColor, maxColor, timer / lerpInterval);
-            obj.GetComponent<Renderer>().material.color = new Color(newColor.x, newColor.y, newColor.z);
-
-            trans.localScale = currScale;
-            timer += Time.deltaTime;
-
-            yield return null;
-        }
-        pointObjectsFlag[objIndex] = false;
-    }
-
-    private IEnumerator moveToTarget(GameObject obj, Vector3 target, int objIndex)
-    {
-        Transform trans = obj.transform;
-        Vector3 initialPos = trans.position;
-        Vector3 currPos = trans.position;
-
-        // TODO: make the base color of the material a public var? or the material itself?
-        float factor = target.y * 0.6f;
-        Color maxColor = new Color((factor*117f) / 255f, (250f*factor) / 255f, (2f) / 255f); // colors need to be between 0-1 for each channel! :/
-
-        float timer = 0f;
-
-        while (currPos != target)
-        {
-            currPos = Vector3.Lerp(initialPos, target, timer / lerpInterval);
-
-            Color currColor = obj.GetComponent<Renderer>().material.color;
-            obj.GetComponent<Renderer>().material.color = Color.Lerp(currColor, maxColor, timer / lerpInterval);
-
-            trans.position = currPos;
-            timer += Time.deltaTime;
-
-            yield return null;
-        }
-        pointObjectsFlag[objIndex] = false;
-    }
 
     // taking the output directly from getOutputData (which I think is just amplitude data?) and scaling it a bit to show a waveform based on volume
     private void displayWaveform(float[] samples, List<GameObject> points, List<bool> pointFlags, float xStart, float spacing, string style)
@@ -131,21 +70,23 @@ public class AudioVisualizer : MonoBehaviour
         {
             float sampleVal = samples[i] * 20f;
 
+            // set up colors to lerp
+            // TODO: make the base color of the material a public var? or the material itself?
+            Color currColor = points[i].GetComponent<Renderer>().material.color;
+            float factor = sampleVal * 0.5f;
+            Color maxColor = new Color((factor * 117f) / 255f, (250f * factor) / 255f, (2f) / 255f); // colors need to be between 0-1 for each channel! :/
+
             if (style == "move")
             {
                 if (pointObjectsFlag[i] == false)
                 {
                     pointObjectsFlag[i] = true;
                     StartCoroutine(
-                        moveToTarget(points[i], new Vector3(xStart, sampleVal, zCoord), i)
+                        moveToTarget(points[i], new Vector3(xStart, sampleVal, zCoord), i, baseColor, maxColor)
                     );
                 }
-
                 points[i].transform.position = Vector3.Lerp(points[i].transform.position, new Vector3(xStart, 0, zCoord), 50 * Time.deltaTime);
-
-                Color currColor = points[i].GetComponent<Renderer>().material.color;
-                points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime);
-
+                points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
                 xStart += spacing;
             }
             else if(style == "stretch")
@@ -154,29 +95,29 @@ public class AudioVisualizer : MonoBehaviour
                 {
                     pointObjectsFlag[i] = true;
                     StartCoroutine(
-                        scaleToTarget(points[i], new Vector3(1, sampleVal, zCoord), i)
+                        scaleToTarget(points[i], new Vector3(1, sampleVal, zCoord), i, baseColor, maxColor)
                     );
                 }
                 points[i].transform.localScale = Vector3.Lerp(points[i].transform.localScale, new Vector3(1, 0, zCoord), 50 * Time.deltaTime);
+                points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
             }
         }
     }
 
     // Start is called before the first frame update
-    void Start()
+    // also, kinda random but pretty cool: https://stackoverflow.com/questions/42325033/how-do-the-unity-private-awake-update-and-start-methods-work
+    public override void Start()
     {
-        audioSrc = audioSrcParent.GetComponent<AudioSource>();
-        pointObjectsOutput = new List<GameObject>();
-        pointObjectsFlag = new List<bool>();
-        outputData = new float[sampleOutputDataSize];
-        setupOutputDataPoints(pointObjectsOutput, pointObjectsFlag);
+        base.Start();
+        outputData = audioData;
+        setupOutputDataPoints(pointObjects, pointObjectsFlag);
     }
 	
     // Update is called once per frame
     void Update()
     {
         audioSrc.GetOutputData(outputData, 0);
-        //displayWaveform(outputData, pointObjectsOutput, pointObjectsFlag, xCoordOutputData, pointSpacing, "stretch");
-        displayWaveform(outputData, pointObjectsOutput, pointObjectsFlag, xCoordOutputData, pointSpacing, "move");
+        //displayWaveform(outputData, pointObjects, pointObjectsFlag, xCoordOutputData, pointSpacing, "stretch");
+        displayWaveform(outputData, pointObjects, pointObjectsFlag, xCoordOutputData, pointSpacing, "move");
     }
 }
