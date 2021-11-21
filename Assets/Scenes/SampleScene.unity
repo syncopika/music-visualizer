@@ -707,8 +707,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 2126597466}
-  lerpInterval: 0.05
   audioSrcParent: {fileID: 895553605}
+  lerpInterval: 0.05
+  sampleDataSize: 512
+  desiredFreqMin: 50
+  desiredFreqMax: 2000
 --- !u!4 &1577950332
 Transform:
   m_ObjectHideFlags: 0
@@ -849,8 +852,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 51187162}
-  lerpInterval: 0.03
   audioSrcParent: {fileID: 895553605}
+  lerpInterval: 0.03
+  sampleDataSize: 512
+  desiredFreqMin: 50
+  desiredFreqMax: 2000
 --- !u!4 &1779460759
 Transform:
   m_ObjectHideFlags: 0
