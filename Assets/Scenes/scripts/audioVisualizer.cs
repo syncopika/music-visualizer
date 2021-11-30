@@ -6,9 +6,8 @@ using UnityEngine;
 public class AudioVisualizer : Visualizer
 {
     private const int sampleOutputDataSize = 512;    // power of 2
-    private const float xCoordOutputData = -55.0f;   // x coord of particles
+   // private const float xCoordOutputData = -55.0f;   // x coord of particles
     private const float pointSpacing = 0.22f;        // Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
-    private const float zCoord = 3.0f;               // z coord of particles
     private float[] outputData;
 
     private float calculateRMS(float[] samples)
@@ -23,7 +22,7 @@ public class AudioVisualizer : Visualizer
 
     private void setupOutputDataPoints(List<GameObject> points, List<bool> pointFlags)
     {
-        float currPos = xCoordOutputData;
+        float currPos = xCoord;
         for (int i = 0; i < sampleOutputDataSize; i++)
         {
             GameObject newPoint = Instantiate(particle, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
@@ -59,11 +58,11 @@ public class AudioVisualizer : Visualizer
         }
     }
 
-
-
     // taking the output directly from getOutputData (which I think is just amplitude data?) and scaling it a bit to show a waveform based on volume
-    private void displayWaveform(float[] samples, List<GameObject> points, List<bool> pointFlags, float xStart, float spacing, string style)
+    private void displayWaveform(float[] samples, List<GameObject> points, List<bool> pointFlags, float spacing, string style)
     {
+        float xStart = xCoord;
+
         Color baseColor = new Color(142f / 255f, 248f / 255f, 50f / 255f);
 
         for (int i = 0; i < sampleOutputDataSize; i++)
@@ -118,6 +117,6 @@ public class AudioVisualizer : Visualizer
     {
         audioSrc.GetOutputData(outputData, 0);
         //displayWaveform(outputData, pointObjects, pointObjectsFlag, xCoordOutputData, pointSpacing, "stretch");
-        displayWaveform(outputData, pointObjects, pointObjectsFlag, xCoordOutputData, pointSpacing, "move");
+        displayWaveform(outputData, pointObjects, pointObjectsFlag, pointSpacing, "move");
     }
 }

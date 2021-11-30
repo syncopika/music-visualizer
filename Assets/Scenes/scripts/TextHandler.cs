@@ -11,7 +11,7 @@ public class TextHandler : MonoBehaviour
     public string arranger;
     public string bpm;
 
-    // font, font size, color?
+    // font type, font size, color?
     public int fontSize;
 
     private GameObject textUi;
@@ -26,7 +26,7 @@ public class TextHandler : MonoBehaviour
         ui.transform.SetParent(canvas.transform);
 
         RectTransform t = ui.AddComponent<RectTransform>();
-        t.anchoredPosition = new Vector2(250, -100);
+        t.anchoredPosition = new Vector2(-500, 250);
 
         Text tex = ui.AddComponent<Text>();
         tex.text = text;
@@ -48,8 +48,8 @@ public class TextHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Vector2 newPos = Vector2.Lerp(new Vector2(150, -100), new Vector2(450, -100), Time.deltaTime);
-        //textUi.GetComponent<RectTransform>().anchoredPosition = newPos;
+        Vector2 newPos = Vector2.Lerp(textUi.GetComponent<RectTransform>().anchoredPosition, new Vector2(550, 250), Time.deltaTime * 0.2f);
+        textUi.GetComponent<RectTransform>().anchoredPosition = newPos;
         //Debug.Log(newPos);
     }
 }

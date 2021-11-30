@@ -12,6 +12,11 @@ public class Visualizer : MonoBehaviour
     public int desiredFreqMin = 50;
     public int desiredFreqMax = 2000;
 
+    // location of visualization
+    public float xCoord = 0.0f;
+    public float yCoord = 0.0f;
+    public float zCoord = 0.0f;
+
     protected AudioSource audioSrc;
     protected float[] audioData;
     // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data

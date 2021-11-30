@@ -34,7 +34,6 @@ public class SpectrumVisualizer : Visualizer
                 // arrange in a circle
                 float xCurr = radius * Mathf.Cos(currAngle * (float)(Math.PI / 180f)); // radians
                 float yCurr = radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
-                float zCoord = 3.0f;   // z coord of particles
 
                 GameObject newPoint = Instantiate(particle, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
                 newPoint.name = ("spectrumPoint_" + i);
@@ -53,8 +52,8 @@ public class SpectrumVisualizer : Visualizer
         else
         {
             // linear arrangement
-            float zCoord = 1.0f;   // z coord of particles
-            float xCoord = -25.0f; // x coord of particles
+            //float zCoord = 1.0f;   // z coord of particles
+            //float xCoord = -25.0f; // x coord of particles
 
             for (int i = 0; i < numFreqBands; i++)
             {
