@@ -862,7 +862,7 @@ MonoBehaviour:
   desiredFreqMax: 2000
   xCoord: 0
   yCoord: 0
-  zCoord: -2
+  zCoord: -20
 --- !u!4 &1779460759
 Transform:
   m_ObjectHideFlags: 0
@@ -975,7 +975,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a14229789340bc4dbb4099a9fa8637e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: hello
+  title: fun bgm
   composer: 
   arranger: 
   bpm: 

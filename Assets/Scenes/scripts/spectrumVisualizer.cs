@@ -9,6 +9,8 @@ public class SpectrumVisualizer : Visualizer
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private string visualizationStyle;
 
+    private GameObject parent;
+
     private void setupSpectrumDataPoints()
     {
         int sampleRate = AudioSettings.outputSampleRate;
@@ -32,8 +34,8 @@ public class SpectrumVisualizer : Visualizer
             for (int i = 0; i < numFreqBands; i++)
             {
                 // arrange in a circle
-                float xCurr = radius * Mathf.Cos(currAngle * (float)(Math.PI / 180f)); // radians
-                float yCurr = radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
+                float xCurr = xCoord + radius * Mathf.Cos(currAngle * (float)(Math.PI / 180f)); // radians
+                float yCurr = yCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
 
                 GameObject newPoint = Instantiate(particle, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
                 newPoint.name = ("spectrumPoint_" + i);
@@ -44,6 +46,7 @@ public class SpectrumVisualizer : Visualizer
                 Vector4 color = r.material.color;
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
+                newPoint.transform.parent = parent.transform;
                 pointObjects.Add(newPoint);
                 pointObjectsFlag.Add(false); // for knowing if the object is currently scaling up to some value
                 currAngle += angleIncrement;
@@ -138,6 +141,7 @@ public class SpectrumVisualizer : Visualizer
     public override void Start()
     {
         base.Start();
+        parent = new GameObject();
         spectrumData = audioData;
         prevSpectrumData = new float[sampleDataSize];
         visualizationStyle = "circle";
@@ -149,5 +153,7 @@ public class SpectrumVisualizer : Visualizer
     {
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
+        parent.transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 20f);
+        //parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
     }
 }
