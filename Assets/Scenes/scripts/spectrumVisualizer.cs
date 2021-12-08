@@ -126,7 +126,7 @@ public class SpectrumVisualizer : Visualizer
                     );
                 }
 
-                // the target object will always scale down to 0.1,1,1 (baseline scale) by default
+                // the target object will always scale down to 1,0.1,1 (baseline scale) by default
                 currTransform.localScale = Vector3.Lerp(currTransform.localScale, new Vector3(1, baseline, 1), 10 * Time.deltaTime);
             }
 

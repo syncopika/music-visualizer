@@ -25,7 +25,7 @@ public class AudioVisualizer : Visualizer
         float currPos = xCoord;
         for (int i = 0; i < sampleOutputDataSize; i++)
         {
-            GameObject newPoint = Instantiate(particle, new Vector3(currPos, 0, zCoord), Quaternion.Euler(0, 0, 0));
+            GameObject newPoint = Instantiate(particle, new Vector3(currPos, yCoord, zCoord), Quaternion.Euler(0, 0, 0));
             newPoint.name = ("outputPoint_" + i);
             newPoint.transform.localScale = new Vector3(0.2f, 1, 1);
             points.Add(newPoint);
@@ -81,10 +81,10 @@ public class AudioVisualizer : Visualizer
                 {
                     pointObjectsFlag[i] = true;
                     StartCoroutine(
-                        moveToTarget(points[i], new Vector3(xStart, sampleVal, zCoord), i, baseColor, maxColor)
+                        moveToTarget(points[i], new Vector3(xStart, sampleVal + yCoord, zCoord), i, baseColor, maxColor)
                     );
                 }
-                points[i].transform.position = Vector3.Lerp(points[i].transform.position, new Vector3(xStart, 0, zCoord), 50 * Time.deltaTime);
+                points[i].transform.position = Vector3.Lerp(points[i].transform.position, new Vector3(xStart, yCoord, zCoord), 50 * Time.deltaTime);
                 points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
                 xStart += spacing;
             }
