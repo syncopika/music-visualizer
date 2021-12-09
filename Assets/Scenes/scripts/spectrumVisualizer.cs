@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpectrumVisualizer : Visualizer
+public class SpectrumVisualizer : VisualizerMultiple
 {
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioVisualizer : Visualizer
+public class AudioVisualizer : VisualizerMultiple
 {
     private const int sampleOutputDataSize = 512;    // power of 2
    // private const float xCoordOutputData = -55.0f;   // x coord of particles

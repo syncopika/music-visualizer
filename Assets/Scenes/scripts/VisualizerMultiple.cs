@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// parent class for visualizations
-public class Visualizer : MonoBehaviour
+// parent class for a visualization containing multiple elements/shapes
+// e.g. a circle of balls, each representing a spectrum bin range
+public class VisualizerMultiple : MonoBehaviour
 {
     public GameObject particle; // the gameobject to use to represent a spectrum data point
     public GameObject audioSrcParent;
+
     public float lerpInterval = 0.05f; // time interval in sec for a data point object to scale towards a value
     public int sampleDataSize = 512;  // must be power of 2
     public int desiredFreqMin = 50;
