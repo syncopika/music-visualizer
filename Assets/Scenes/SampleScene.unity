@@ -410,7 +410,7 @@ MonoBehaviour:
   particle: {fileID: 1780851849}
   audioSrcParent: {fileID: 895553605}
   lerpInterval: 0.05
-  sampleDataSize: 512
+  sampleDataSize: 128
   desiredFreq: 50
   xCoord: 0
   yCoord: 0
@@ -463,13 +463,13 @@ MonoBehaviour:
   particle: {fileID: 77013620}
   audioSrcParent: {fileID: 895553605}
   lerpInterval: 0.05
-  sampleDataSize: 512
-  desiredFreq: 440
+  sampleDataSize: 128
+  desiredFreq: 50
   xCoord: 0
   yCoord: 0
   zCoord: -20
-  scaleFrom: {x: 80, y: 80, z: 80}
-  scaleTo: {x: 100, y: 100, z: 100}
+  scaleFrom: {x: 40, y: 40, z: 40}
+  scaleTo: {x: 60, y: 60, z: 60}
 --- !u!4 &530936154
 Transform:
   m_ObjectHideFlags: 0
@@ -479,7 +479,7 @@ Transform:
   m_GameObject: {fileID: 530936152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -70.05372, y: -62.243187, z: 692.0178}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 14
