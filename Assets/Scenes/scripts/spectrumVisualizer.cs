@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// visualizer based on frequency
+// this visualization consists of multiple objects in various configurations such as a circle or a line
 public class SpectrumVisualizer : VisualizerMultiple
 {
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private string visualizationStyle;
-
     private GameObject parent;
 
     private void setupSpectrumDataPoints()
@@ -17,9 +18,9 @@ public class SpectrumVisualizer : VisualizerMultiple
         int freqMax = sampleRate / 2; // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
 
-        Debug.Log("sample rate: " + sampleRate);
-        Debug.Log("max supported frequency in data: " + freqMax);
-        Debug.Log("freq per bin: " + freqPerIndex);
+        //Debug.Log("sample rate: " + sampleRate);
+        //Debug.Log("max supported frequency in data: " + freqMax);
+        //Debug.Log("freq per bin: " + freqPerIndex);
 
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(sampleDataSize - 1, desiredFreqMax / freqPerIndex);
@@ -47,8 +48,8 @@ public class SpectrumVisualizer : VisualizerMultiple
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
                 newPoint.transform.parent = parent.transform;
-                pointObjects.Add(newPoint);
-                pointObjectsFlag.Add(false); // for knowing if the object is currently scaling up to some value
+                objectsArray.Add(newPoint);
+                isAnimatingArray.Add(false); // for knowing if the object is currently scaling up to some value
                 currAngle += angleIncrement;
             }
         }
@@ -69,8 +70,8 @@ public class SpectrumVisualizer : VisualizerMultiple
                 Vector4 color = r.material.color;
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
-                pointObjects.Add(newPoint);
-                pointObjectsFlag.Add(false);
+                objectsArray.Add(newPoint);
+                isAnimatingArray.Add(false);
                 xCoord += 1.1f;
             }
         }
@@ -88,7 +89,8 @@ public class SpectrumVisualizer : VisualizerMultiple
         int particleIndex = 0;
         for (int i = targetIndexMin; i < targetIndexMax; i++)
         {
-            Transform currTransform = pointObjects[particleIndex].transform;
+            GameObject currObj = objectsArray[particleIndex];
+            Transform currTransform = currObj.transform;
             float binValDelta = 90*(spectrumData[i] - prevSpectrumData[i]);
             float baseline = 0.1f;
 
@@ -99,16 +101,16 @@ public class SpectrumVisualizer : VisualizerMultiple
             currTransform.rotation = Quaternion.identity;
 
             // scale it based on spectrum bin value
-            Color currColor = pointObjects[particleIndex].GetComponent<Renderer>().material.color;
+            Color currColor = currObj.GetComponent<Renderer>().material.color;
 
             if (visualizationStyle == "circle")
             {
                 // circular pattern
-                if (binValDelta > 0 && pointObjectsFlag[particleIndex] == false)
+                if (binValDelta > 0 && isAnimatingArray[particleIndex] == false)
                 {
-                    pointObjectsFlag[particleIndex] = true;
+                    isAnimatingArray[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta, 1, 1), particleIndex, currColor, currColor)
+                        scaleToTarget(currObj, new Vector3(binValDelta, 1, 1), particleIndex, currColor, currColor)
                     );
                 }
 
@@ -118,11 +120,11 @@ public class SpectrumVisualizer : VisualizerMultiple
             else
             {
                 // linear pattern
-                if (binValDelta > 0 && pointObjectsFlag[particleIndex] == false)
+                if (binValDelta > 0 && isAnimatingArray[particleIndex] == false)
                 {
-                    pointObjectsFlag[particleIndex] = true;
+                    isAnimatingArray[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(pointObjects[particleIndex], new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex, currColor, currColor)
+                        scaleToTarget(currObj, new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex, currColor, currColor)
                     );
                 }
 

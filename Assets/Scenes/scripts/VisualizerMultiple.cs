@@ -23,8 +23,8 @@ public class VisualizerMultiple : MonoBehaviour
     protected float[] audioData;
     // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data
 
-    protected List<GameObject> pointObjects;
-    protected List<bool> pointObjectsFlag; // keep track of which objects are scaling up based on audio data
+    protected List<GameObject> objectsArray;
+    protected List<bool> isAnimatingArray; // keep track of which objects are scaling up based on audio data
 
 
     // provide utility functions
@@ -32,22 +32,22 @@ public class VisualizerMultiple : MonoBehaviour
     // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
     protected IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
     {
-        Transform trans = obj.transform;
-        Vector3 initialScale = trans.localScale;
-        Vector3 currScale = trans.localScale;
+        Transform transform = obj.transform;
+        Vector3 initialScale = transform.localScale;
+        Vector3 currScale = transform.localScale;
         float timer = 0f;
 
         while (currScale != target)
         {
             currScale = Vector3.Lerp(initialScale, target, timer / lerpInterval);
-            trans.localScale = currScale;
+            transform.localScale = currScale;
             timer += Time.deltaTime;
 
             obj.GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, timer / lerpInterval);
 
             yield return null;
         }
-        pointObjectsFlag[objIndex] = false;
+        isAnimatingArray[objIndex] = false;
     }
 
     protected IEnumerator moveToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
@@ -68,7 +68,7 @@ public class VisualizerMultiple : MonoBehaviour
 
             yield return null;
         }
-        pointObjectsFlag[objIndex] = false;
+        isAnimatingArray[objIndex] = false;
     }
 
     protected void prefill(float[] arr, float val)
@@ -86,7 +86,7 @@ public class VisualizerMultiple : MonoBehaviour
         audioSrc = audioSrcParent.GetComponent<AudioSource>();
         audioData = new float[sampleDataSize];
         //prevAudioData = new float[sampleDataSize];
-        pointObjects = new List<GameObject>();
-        pointObjectsFlag = new List<bool>();
+        objectsArray = new List<GameObject>();
+        isAnimatingArray = new List<bool>();
     }
 }

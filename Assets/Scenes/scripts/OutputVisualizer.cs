@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioVisualizer : VisualizerMultiple
+// visualizes the audio output data as a waveform (based on amplitude, or volume)
+// this visualization consists of multiple objects that form the wave
+public class OutputVisualizer : VisualizerMultiple
 {
     private const int sampleOutputDataSize = 512;    // power of 2
-   // private const float xCoordOutputData = -55.0f;   // x coord of particles
     private const float pointSpacing = 0.22f;        // Screen.width / spectrumDataSize; TODO: have it scale with screen size/camera?
     private float[] outputData;
 
@@ -20,7 +21,7 @@ public class AudioVisualizer : VisualizerMultiple
         return Mathf.Sqrt(sum / samples.Length);
     }
 
-    private void setupOutputDataPoints(List<GameObject> points, List<bool> pointFlags)
+    private void setupOutputDataPoints(List<GameObject> objectsArray, List<bool> isAnimatingArray)
     {
         float currPos = xCoord;
         for (int i = 0; i < sampleOutputDataSize; i++)
@@ -28,15 +29,15 @@ public class AudioVisualizer : VisualizerMultiple
             GameObject newPoint = Instantiate(particle, new Vector3(currPos, yCoord, zCoord), Quaternion.Euler(0, 0, 0));
             newPoint.name = ("outputPoint_" + i);
             newPoint.transform.localScale = new Vector3(0.2f, 1, 1);
-            points.Add(newPoint);
-            pointFlags.Add(false);
+            objectsArray.Add(newPoint);
+            isAnimatingArray.Add(false);
 
             currPos += pointSpacing;
         }
     }
 
     // display volume when using samples from getOutputData
-    private void displayVolumeinDb(float[] samples, List<GameObject> points, float xStart, float spacing)
+    private void displayVolumeinDb(float[] samples, float xStart, float spacing)
     {
         float rootMeanSquare = calculateRMS(samples);
         float log = rootMeanSquare / 0.1f == 0 ? 0 : Mathf.Log10(rootMeanSquare / 0.1f);
@@ -45,13 +46,13 @@ public class AudioVisualizer : VisualizerMultiple
 		
         for(int i = 0; i < sampleOutputDataSize; i++)
         {
-            if (i <= points.Count / 2)
+            if (i <= objectsArray.Count / 2)
             {
-                points[i].transform.position = new Vector3(xStart, (float)newVol * ((i+1) * yIncrement), zCoord);
+                objectsArray[i].transform.position = new Vector3(xStart, (float)newVol * ((i+1) * yIncrement), zCoord);
             }
             else
             {
-                points[i].transform.position = new Vector3(xStart,  ((float)newVol * ((points.Count - i) * yIncrement)), zCoord);
+                objectsArray[i].transform.position = new Vector3(xStart,  ((float)newVol * ((objectsArray.Count - i) * yIncrement)), zCoord);
             }
 			
             xStart += spacing;
@@ -59,7 +60,7 @@ public class AudioVisualizer : VisualizerMultiple
     }
 
     // taking the output directly from getOutputData (which I think is just amplitude data?) and scaling it a bit to show a waveform based on volume
-    private void displayWaveform(float[] samples, List<GameObject> points, List<bool> pointFlags, float spacing, string style)
+    private void displayWaveform(float[] samples, float spacing, string style)
     {
         float xStart = xCoord;
 
@@ -67,38 +68,39 @@ public class AudioVisualizer : VisualizerMultiple
 
         for (int i = 0; i < sampleOutputDataSize; i++)
         {
+            GameObject currObj = objectsArray[i];
             float sampleVal = samples[i] * 20f;
 
             // set up colors to lerp
             // TODO: make the base color of the material a public var? or the material itself?
-            Color currColor = points[i].GetComponent<Renderer>().material.color;
+            Color currColor = currObj.GetComponent<Renderer>().material.color;
             float factor = sampleVal * 0.5f;
             Color maxColor = new Color((factor * 117f) / 255f, (250f * factor) / 255f, (2f) / 255f); // colors need to be between 0-1 for each channel! :/
 
             if (style == "move")
             {
-                if (pointObjectsFlag[i] == false)
+                if (isAnimatingArray[i] == false)
                 {
-                    pointObjectsFlag[i] = true;
+                    isAnimatingArray[i] = true;
                     StartCoroutine(
-                        moveToTarget(points[i], new Vector3(xStart, sampleVal + yCoord, zCoord), i, baseColor, maxColor)
+                        moveToTarget(currObj, new Vector3(xStart, sampleVal + yCoord, zCoord), i, baseColor, maxColor)
                     );
                 }
-                points[i].transform.position = Vector3.Lerp(points[i].transform.position, new Vector3(xStart, yCoord, zCoord), 50 * Time.deltaTime);
-                points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
+                currObj.transform.position = Vector3.Lerp(currObj.transform.position, new Vector3(xStart, yCoord, zCoord), 50 * Time.deltaTime);
+                currObj.GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
                 xStart += spacing;
             }
             else if(style == "stretch")
             {
-                if (pointObjectsFlag[i] == false)
+                if (isAnimatingArray[i] == false)
                 {
-                    pointObjectsFlag[i] = true;
+                    isAnimatingArray[i] = true;
                     StartCoroutine(
-                        scaleToTarget(points[i], new Vector3(1, sampleVal, zCoord), i, baseColor, maxColor)
+                        scaleToTarget(currObj, new Vector3(1, sampleVal, zCoord), i, baseColor, maxColor)
                     );
                 }
-                points[i].transform.localScale = Vector3.Lerp(points[i].transform.localScale, new Vector3(1, 0, zCoord), 50 * Time.deltaTime);
-                points[i].GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
+                currObj.transform.localScale = Vector3.Lerp(currObj.transform.localScale, new Vector3(1, 0, zCoord), 50 * Time.deltaTime);
+                currObj.GetComponent<Renderer>().material.color = Color.Lerp(currColor, baseColor, 10 * Time.deltaTime); // lerp color back to baseline
             }
         }
     }
@@ -109,14 +111,14 @@ public class AudioVisualizer : VisualizerMultiple
     {
         base.Start();
         outputData = audioData;
-        setupOutputDataPoints(pointObjects, pointObjectsFlag);
+        setupOutputDataPoints(objectsArray, isAnimatingArray);
     }
 	
     // Update is called once per frame
     void Update()
     {
         audioSrc.GetOutputData(outputData, 0);
-        //displayWaveform(outputData, pointObjects, pointObjectsFlag, xCoordOutputData, pointSpacing, "stretch");
-        displayWaveform(outputData, pointObjects, pointObjectsFlag, pointSpacing, "move");
+        //displayWaveform(outputData, pointSpacing, "stretch");
+        displayWaveform(outputData, pointSpacing, "move");
     }
 }

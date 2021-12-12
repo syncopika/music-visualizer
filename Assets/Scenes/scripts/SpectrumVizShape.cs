@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// visualize a single spectrum bin with a shape
+// visualize a single spectrum bin (frequency) with a shape
 public class SpectrumVizShape : VisualizerSingle
 {
     private float[] spectrumData;
-
+    
     public Vector3 scaleFrom;
     public Vector3 scaleTo;
 
