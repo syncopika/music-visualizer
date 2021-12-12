@@ -41,6 +41,7 @@ public class SpectrumVizShape : VisualizerSingle
         // the target object will always scale down by default
         currTransform.localScale = Vector3.Lerp(currTransform.localScale, scaleFrom, 2 * Time.deltaTime);
     }
+    
     public override void Start()
     {
         base.Start();

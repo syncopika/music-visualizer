@@ -24,11 +24,8 @@ public class VisualizerMultiple : MonoBehaviour
     // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data
 
     protected List<GameObject> objectsArray;
-    protected List<bool> isAnimatingArray; // keep track of which objects are scaling up based on audio data
-
-
-    // provide utility functions
-
+    protected List<bool> isAnimatingArray; // keep track of which objects are scaling based on audio data
+    
     // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
     protected IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
     {

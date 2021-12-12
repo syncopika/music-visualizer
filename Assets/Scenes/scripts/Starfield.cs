@@ -15,7 +15,7 @@ public class Starfield : VisualizerMultiple
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     
-    private Vector3 initialObjectScale; // get the initil scale of the object that we're multiplying
+    private Vector3 initialObjectScale; // get the initial scale of the object that we're multiplying
 
     private void setupSpectrumDataPoints()
     {
@@ -49,7 +49,7 @@ public class Starfield : VisualizerMultiple
     public void displaySpectrum(float[] spectrumData)
     {
         int sampleRate = AudioSettings.outputSampleRate;
-        int freqMax = sampleRate / 2;                          // this is the max supported frequency in our data
+        int freqMax = sampleRate / 2;                  // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
 
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);

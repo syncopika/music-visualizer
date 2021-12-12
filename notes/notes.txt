@@ -14,5 +14,5 @@ https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-alway
 
 TODO:
 - color gradient on plane based on spectrum data
-- various 3d objects that grow/shrink like star, cube
-- create a star field like in Stella no Mahou ED
+- create a star field like in Stella no Mahou ED?
+- more sample scenes, more code refactoring for easier re-use
