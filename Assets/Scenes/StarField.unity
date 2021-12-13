@@ -569,7 +569,9 @@ MonoBehaviour:
   desiredFreqMax: 2000
   xCoord: 0
   yCoord: 0
-  zCoord: 100
+  zCoord: 0
+  camera: {fileID: 1190074003}
+  distFromCamera: 50
 --- !u!114 &1766815652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,7 +587,7 @@ MonoBehaviour:
   cube: {fileID: 486444666}
   mat: {fileID: 2100000, guid: 1e31d6c5b9389af49a62ede2fd5bf053, type: 2}
   numObjects: 20
-  xRange: 100
+  xRange: 150
   yRange: 100
   zRange: 500
   scale: {x: 3, y: 5, z: 0.2}
@@ -662,7 +664,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.391
       inSlope: 0
       outSlope: 0
       tangentMode: 0

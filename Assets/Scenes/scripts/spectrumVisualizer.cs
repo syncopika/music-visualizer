@@ -7,6 +7,9 @@ using UnityEngine;
 // this visualization consists of multiple objects in various configurations such as a circle or a line
 public class SpectrumVisualizer : VisualizerMultiple
 {
+    public Camera camera;
+    public float distFromCamera; // based on z-axis
+    
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private string visualizationStyle;
@@ -156,6 +159,12 @@ public class SpectrumVisualizer : VisualizerMultiple
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
         parent.transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 20f);
+        
+        if(camera){
+            Vector3 cameraPosition = camera.transform.position;
+            parent.transform.position = new Vector3(cameraPosition.x, cameraPosition.y, cameraPosition.z + distFromCamera);
+        }
+        
         //parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
     }
 }
