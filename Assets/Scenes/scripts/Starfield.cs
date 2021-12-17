@@ -75,9 +75,9 @@ public class Starfield : VisualizerMultiple
                     scaleToTarget(
                         currObj,
                         new Vector3(
-                            Mathf.Min(initialObjectScale.x * 3, initialObjectScale.x * binValDelta), 
-                            Mathf.Min(initialObjectScale.x * 3, initialObjectScale.y * binValDelta), 
-                            Mathf.Min(initialObjectScale.x * 3, initialObjectScale.z * binValDelta)
+                            Mathf.Min(initialObjectScale.x * 2, initialObjectScale.x * binValDelta), // ensure max scale is twice the original scale
+                            Mathf.Min(initialObjectScale.x * 2, initialObjectScale.y * binValDelta), 
+                            Mathf.Min(initialObjectScale.x * 2, initialObjectScale.z * binValDelta)
                         ), 
                         i, 
                         currColor, 
