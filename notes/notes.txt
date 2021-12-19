@@ -8,3 +8,12 @@ https://answers.unity.com/questions/157940/getoutputdata-and-getspectrumdata-the
 https://answers.unity.com/questions/472188/what-does-getoutputdata-sample-float-represent.html
 https://dsp.stackexchange.com/questions/14765/adequate-representation-of-frequency-domain-amplitude-magnitude-of-fft-of-a-sign
 https://365xr.blog/hololens-and-unity-tip-001-scaling-of-rotated-gameobjects/
+https://www.youtube.com/watch?v=PzVbaaxgPco -> Unity3D How To: Audio Visualizer With Spectrum Data
+https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-always-white.html
+
+
+TODO:
+- color gradient on plane based on spectrum data?
+- more sample scenes, more code refactoring for easier re-use
+- figure out recorder (why does it lag majorly initially when I turn it on?), output video quality
+- test with multiple audio sources, not just one
