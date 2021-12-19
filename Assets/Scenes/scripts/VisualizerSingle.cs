@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// a base class meant to be extended
 public class VisualizerSingle : MonoBehaviour
 {
-    public GameObject particle; // the gameobject to use to represent a spectrum data point
     public GameObject audioSrcParent;
 
     public float lerpInterval = 0.05f;  // time interval in sec for a data point object to scale towards a value
@@ -22,7 +22,7 @@ public class VisualizerSingle : MonoBehaviour
     protected bool isAnimating;
 
     // super helpful: https://www.youtube.com/watch?v=PzVbaaxgPco => Unity3D How To: Audio Visualizer With Spectrum Data
-    protected IEnumerator scaleToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
+    protected IEnumerator scaleToTarget(GameObject obj, Vector3 target, Color minColor, Color maxColor)
     {
         Transform trans = obj.transform;
         Vector3 initialScale = trans.localScale;
@@ -42,7 +42,7 @@ public class VisualizerSingle : MonoBehaviour
         isAnimating = false;
     }
 
-    protected IEnumerator moveToTarget(GameObject obj, Vector3 target, int objIndex, Color minColor, Color maxColor)
+    protected IEnumerator moveToTarget(GameObject obj, Vector3 target, Color minColor, Color maxColor)
     {
         Transform trans = obj.transform;
         Vector3 initialPos = trans.position;
@@ -58,6 +58,22 @@ public class VisualizerSingle : MonoBehaviour
 
             obj.GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, timer / lerpInterval);
 
+            yield return null;
+        }
+        isAnimating = false;
+    }
+
+    // just scale to a color
+    protected IEnumerator scaleToColor(GameObject obj, Color targetColor)
+    {
+        Color currColor = obj.GetComponent<Renderer>().material.color;
+        float timer = 0f;
+
+        while (currColor != targetColor)
+        {
+            timer += Time.deltaTime;
+            obj.GetComponent<Renderer>().material.color = Color.Lerp(currColor, targetColor, timer / lerpInterval);
+            currColor = obj.GetComponent<Renderer>().material.color;
             yield return null;
         }
         isAnimating = false;

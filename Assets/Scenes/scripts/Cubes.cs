@@ -7,7 +7,7 @@ using UnityEngine;
 public class Cubes : MonoBehaviour
 {
     public GameObject cube;
-    public Material mat;
+    public Material[] mat;
     public int numObjects;
     public int xRange;
     public int yRange;
@@ -34,7 +34,7 @@ public class Cubes : MonoBehaviour
             
             GameObject newObj = Instantiate(cube, new Vector3(randX, randY, randZ), UnityEngine.Random.rotation);
             newObj.transform.localScale = scale;
-            newObj.GetComponent<Renderer>().material = mat;
+            newObj.GetComponent<Renderer>().material = mat[i % mat.Length];
             cubes.Add(newObj);
         }
     }

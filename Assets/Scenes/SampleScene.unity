@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.4465782, g: 0.49641252, b: 0.5748167, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -372,59 +372,6 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaDirect: 0.5
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
---- !u!1 &374711834
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 374711836}
-  - component: {fileID: 374711835}
-  m_Layer: 0
-  m_Name: spectrumCubeViz
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &374711835
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 374711834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de882663939976c4099d8a754062ec69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particle: {fileID: 1780851849}
-  audioSrcParent: {fileID: 895553605}
-  lerpInterval: 0.05
-  sampleDataSize: 128
-  desiredFreq: 50
-  xCoord: 0
-  yCoord: 0
-  zCoord: 0
-  scaleFrom: {x: 10, y: 10, z: 10}
-  scaleTo: {x: 15, y: 15, z: 15}
---- !u!4 &374711836
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 374711834}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -70.05372, y: -62.243187, z: 692.0178}
-  m_LocalScale: {x: 10, y: 10, z: 10}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,6 +863,9 @@ MonoBehaviour:
   xCoord: 0
   yCoord: 0
   zCoord: -20
+  camera: {fileID: 0}
+  distFromCamera: 0
+  visualizationStyle: circle
 --- !u!4 &1779460759
 Transform:
   m_ObjectHideFlags: 0
@@ -942,6 +892,7 @@ GameObject:
   - component: {fileID: 1780851853}
   - component: {fileID: 1780851852}
   - component: {fileID: 1780851851}
+  - component: {fileID: 1780851850}
   m_Layer: 0
   m_Name: spectrumCube
   m_TagString: Untagged
@@ -949,6 +900,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1780851850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780851849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de882663939976c4099d8a754062ec69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSrcParent: {fileID: 895553605}
+  lerpInterval: 0.05
+  sampleDataSize: 128
+  desiredFreq: 50
+  xCoord: 0
+  yCoord: 0
+  zCoord: 0
+  scaleFrom: {x: 10, y: 10, z: 10}
+  scaleTo: {x: 15, y: 15, z: 15}
+  scaleToColorOnly: 0
+  rotate: 1
 --- !u!65 &1780851851
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1019,7 +993,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780851849}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -70.05372, y: -62.243187, z: 692.0178}
+  m_LocalPosition: {x: 0, y: -0, z: -5}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1124,10 +1098,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   title: fun bgm
+  titlePos: {x: -400, y: 200}
   composer: 
+  composerPos: {x: 0, y: 0}
   arranger: 
+  arrangerPos: {x: 0, y: 0}
   bpm: 
-  fontSize: 0
+  bpmPos: {x: 0, y: 0}
+  miscText: 
+  miscTextPos: {x: 0, y: 0}
+  moveText: 0
   canvas: {fileID: 1886272765}
 --- !u!114 &1886272763
 MonoBehaviour:

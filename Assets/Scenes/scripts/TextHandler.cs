@@ -7,31 +7,48 @@ using UnityEngine.UI;
 public class TextHandler : MonoBehaviour
 {
     public string title;
+    public Vector2 titlePos;
+
     public string composer;
+    public Vector2 composerPos;
+
     public string arranger;
+    public Vector2 arrangerPos;
+    
     public string bpm;
+    public Vector2 bpmPos;
+
+    public string miscText;
+    public Vector2 miscTextPos;
+
+    public bool moveText;
 
     // font type, font size, color?
-    public int fontSize;
+    //public int fontSize;
 
-    private GameObject textUi;
+    private Dictionary<string, (GameObject, Vector2)> textUis;
+    //private GameObject textUi;
 
     public Canvas canvas; // where the text should go
 
     // https://gamedev.stackexchange.com/questions/116177/how-to-dynamically-create-an-ui-text-object-in-unity-5
     // https://answers.unity.com/questions/1716863/dynamically-added-ui-text-is-not-displaying.html
-    private GameObject createText(string text)
+    private GameObject createText(string text, Vector2 pos)
     {
         GameObject ui = new GameObject("textUI");
         ui.transform.SetParent(canvas.transform);
 
         RectTransform t = ui.AddComponent<RectTransform>();
-        t.anchoredPosition = new Vector2(-500, 250);
+        t.anchoredPosition = pos; //new Vector2(-500, 250);
+
+        // allow text to be laid out horizontally as much as possible
+        ContentSizeFitter csf = ui.AddComponent<ContentSizeFitter>();
+        csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         Text tex = ui.AddComponent<Text>();
         tex.text = text;
         tex.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
-        tex.fontSize = 18;
+        tex.fontSize = 16;
         tex.color = Color.white;
 
         return ui;
@@ -40,16 +57,43 @@ public class TextHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        textUi = createText(title);
+        textUis = new Dictionary<string, (GameObject, Vector2)>();
+        
+        if(title != "")
+        {
+            textUis["title"] = (createText(title, titlePos), titlePos); // maybe use 2nd part of tuple as the final position to animate to, if animation is desired?
+        }
 
-        Debug.Log("hello from text handler");
+        if(composer != "")
+        {
+            textUis["composer"] = (createText(composer, composerPos), composerPos);
+        }
+
+        if (arranger != "")
+        {
+            textUis["arranger"] = (createText(arranger, arrangerPos), arrangerPos);
+        }
+
+        if (bpm != "")
+        {
+            textUis["bpm"] = (createText(bpm, bpmPos), bpmPos);
+        }
+
+        if (miscText != "")
+        {
+            textUis["miscText"] = (createText(miscText, miscTextPos), miscTextPos);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 newPos = Vector2.Lerp(textUi.GetComponent<RectTransform>().anchoredPosition, new Vector2(550, 250), Time.deltaTime * 0.2f);
-        textUi.GetComponent<RectTransform>().anchoredPosition = newPos;
-        //Debug.Log(newPos);
+        foreach (KeyValuePair<string, (GameObject, Vector2)> kv in textUis)
+        {
+            // TODO: animate text
+        }
+
+        //Vector2 newPos = Vector2.Lerp(textUi.GetComponent<RectTransform>().anchoredPosition, new Vector2(550, 250), Time.deltaTime * 0.2f);
+        //textUi.GetComponent<RectTransform>().anchoredPosition = newPos;
     }
 }

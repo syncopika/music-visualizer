@@ -13,6 +13,7 @@ https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-alway
 
 
 TODO:
-- color gradient on plane based on spectrum data
-- create a star field like in Stella no Mahou ED?
+- color gradient on plane based on spectrum data?
 - more sample scenes, more code refactoring for easier re-use
+- figure out recorder (why does it lag majorly initially when I turn it on?), output video quality
+- test with multiple audio sources, not just one

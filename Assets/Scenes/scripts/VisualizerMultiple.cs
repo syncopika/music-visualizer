@@ -21,7 +21,7 @@ public class VisualizerMultiple : MonoBehaviour
 
     protected AudioSource audioSrc;
     protected float[] audioData;
-    // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum data
+    // private float[] prevAudioData;   // keep track of previous spectrum data - really only important for dealing with spectrum (and not output) data
 
     protected List<GameObject> objectsArray;
     protected List<bool> isAnimatingArray; // keep track of which objects are scaling based on audio data

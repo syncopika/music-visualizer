@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// visualizer based on frequency
+// visualizer based on frequency (full spectrum)
 // this visualization consists of multiple objects in various configurations such as a circle or a line
 public class SpectrumVisualizer : VisualizerMultiple
 {
     public Camera camera;
     public float distFromCamera; // based on z-axis
-    
+    public string visualizationStyle;
+
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
-    private string visualizationStyle;
     private GameObject parent;
 
     private void setupSpectrumDataPoints()
@@ -61,10 +61,9 @@ public class SpectrumVisualizer : VisualizerMultiple
             // linear arrangement
             //float zCoord = 1.0f;   // z coord of particles
             //float xCoord = -25.0f; // x coord of particles
-
             for (int i = 0; i < numFreqBands; i++)
             {
-                GameObject newPoint = Instantiate(particle, new Vector3(xCoord, 0, zCoord), Quaternion.Euler(0, 0, 0));
+                GameObject newPoint = Instantiate(particle, new Vector3(xCoord, yCoord, zCoord), Quaternion.Euler(0, 0, 0));
                 newPoint.name = ("spectrumPoint_" + i);
 
                 // change color for each freq band
@@ -73,9 +72,10 @@ public class SpectrumVisualizer : VisualizerMultiple
                 Vector4 color = r.material.color;
                 r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
+                newPoint.transform.parent = parent.transform;
                 objectsArray.Add(newPoint);
                 isAnimatingArray.Add(false);
-                xCoord += 1.1f;
+                xCoord += 1.8f;
             }
         }
     }
@@ -127,12 +127,11 @@ public class SpectrumVisualizer : VisualizerMultiple
                 {
                     isAnimatingArray[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(currObj, new Vector3(binValDelta*0.5f, binValDelta, 1), particleIndex, currColor, currColor)
+                        scaleToTarget(currObj, new Vector3(binValDelta*0.2f, binValDelta*1.1f, 1), particleIndex, currColor, currColor)
                     );
                 }
 
-                // the target object will always scale down to 1,0.1,1 (baseline scale) by default
-                currTransform.localScale = Vector3.Lerp(currTransform.localScale, new Vector3(1, baseline, 1), 10 * Time.deltaTime);
+                currTransform.localScale = Vector3.Lerp(currTransform.localScale, new Vector3(baseline, baseline, baseline), 10 * Time.deltaTime);
             }
 
             // put back the rotation
@@ -149,7 +148,7 @@ public class SpectrumVisualizer : VisualizerMultiple
         parent = new GameObject();
         spectrumData = audioData;
         prevSpectrumData = new float[sampleDataSize];
-        visualizationStyle = "circle";
+        //visualizationStyle = "circle";
         prefill(prevSpectrumData, 0.0f);
         setupSpectrumDataPoints();
     }
@@ -158,11 +157,14 @@ public class SpectrumVisualizer : VisualizerMultiple
     {
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
-        parent.transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 20f);
+        
+        if(visualizationStyle == "circle") parent.transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 20f);
         
         if(camera){
             Vector3 cameraPosition = camera.transform.position;
             parent.transform.position = new Vector3(cameraPosition.x, cameraPosition.y, cameraPosition.z + distFromCamera);
+
+            if(visualizationStyle == "line") parent.transform.rotation = camera.transform.rotation;
         }
         
         //parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
