@@ -8,8 +8,10 @@ using UnityEngine;
 public class SpectrumVisualizer : VisualizerMultiple
 {
     public Camera camera;
-    public float distFromCamera; // based on z-axis
-    public string visualizationStyle;
+    public float distFromCamera;      // based on z-axis
+    public string visualizationStyle; // circle or line
+    public string orientation;        // vertical or horizontal
+    public float circleRadius;        // if visualization style is circle
 
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
@@ -21,46 +23,50 @@ public class SpectrumVisualizer : VisualizerMultiple
         int freqMax = sampleRate / 2; // this is the max supported frequency in our data
         float freqPerIndex = freqMax / sampleDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
 
-        //Debug.Log("sample rate: " + sampleRate);
-        //Debug.Log("max supported frequency in data: " + freqMax);
-        //Debug.Log("freq per bin: " + freqPerIndex);
-
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(sampleDataSize - 1, desiredFreqMax / freqPerIndex);
         int numFreqBands = targetIndexMax - targetIndexMin;
 
         if (visualizationStyle == "circle")
         {
-            float radius = 15f;
+            float radius = circleRadius; //15f;
             float currAngle = 0f;
             float angleIncrement = 360f / numFreqBands;
 
             for (int i = 0; i < numFreqBands; i++)
             {
-                // arrange in a circle
+                GameObject newPoint;
                 float xCurr = xCoord + radius * Mathf.Cos(currAngle * (float)(Math.PI / 180f)); // radians
-                float yCurr = yCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
-
-                GameObject newPoint = Instantiate(particle, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
+                if (orientation == "horizontal")
+                {
+                    float zCurr = zCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
+                    newPoint = Instantiate(particle, new Vector3(xCurr, yCoord, zCurr), Quaternion.Euler(0, 0, 0));
+                }
+                else
+                {
+                    float yCurr = yCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
+                    newPoint = Instantiate(particle, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
+                }
+                
                 newPoint.name = ("spectrumPoint_" + i);
 
                 // change color for each freq band
                 float fraction = (float)i / numFreqBands;
-                Renderer r = newPoint.GetComponent<Renderer>();
-                Vector4 color = r.material.color;
-                r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
+                Renderer renderer = newPoint.GetComponent<Renderer>();
+                Vector4 color = renderer.material.color;
+                renderer.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
-                newPoint.transform.parent = parent.transform;
+                newPoint.transform.parent = parent.transform; // put these point objects under a GameObject parent
+
                 objectsArray.Add(newPoint);
                 isAnimatingArray.Add(false); // for knowing if the object is currently scaling up to some value
+
                 currAngle += angleIncrement;
             }
         }
         else
         {
             // linear arrangement
-            //float zCoord = 1.0f;   // z coord of particles
-            //float xCoord = -25.0f; // x coord of particles
             for (int i = 0; i < numFreqBands; i++)
             {
                 GameObject newPoint = Instantiate(particle, new Vector3(xCoord, yCoord, zCoord), Quaternion.Euler(0, 0, 0));
@@ -68,13 +74,15 @@ public class SpectrumVisualizer : VisualizerMultiple
 
                 // change color for each freq band
                 float fraction = (float)i / numFreqBands;
-                Renderer r = newPoint.GetComponent<Renderer>();
-                Vector4 color = r.material.color;
-                r.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
+                Renderer renderer = newPoint.GetComponent<Renderer>();
+                Vector4 color = renderer.material.color;
+                renderer.material.color = new Vector4(fraction * color.x, fraction * color.y, color.z, color.w);
 
                 newPoint.transform.parent = parent.transform;
+
                 objectsArray.Add(newPoint);
                 isAnimatingArray.Add(false);
+
                 xCoord += 1.8f;
             }
         }
@@ -83,8 +91,8 @@ public class SpectrumVisualizer : VisualizerMultiple
     public void displaySpectrum(float[] spectrumData)
     {
         int sampleRate = AudioSettings.outputSampleRate;
-        int freqMax = sampleRate / 2;                          // this is the max supported frequency in our data
-        float freqPerIndex = freqMax / sampleDataSize; // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
+        int freqMax = sampleRate / 2;                       // this is the max supported frequency in our data
+        float freqPerIndex = freqMax / sampleDataSize;      // this is the frequency increment between indices of the data. e.g. data[0] = n Hz, data[1] = 2*n Hz, etc.
 
         int targetIndexMin = (int)(desiredFreqMin / freqPerIndex);
         int targetIndexMax = (int)Math.Min(sampleDataSize - 1, desiredFreqMax / freqPerIndex);
@@ -112,13 +120,52 @@ public class SpectrumVisualizer : VisualizerMultiple
                 if (binValDelta > 0 && isAnimatingArray[particleIndex] == false)
                 {
                     isAnimatingArray[particleIndex] = true;
-                    StartCoroutine(
-                        scaleToTarget(currObj, new Vector3(binValDelta, 1, 1), particleIndex, currColor, currColor)
-                    );
-                }
+                    if (orientation == "horizontal")
+                    {
+                        StartCoroutine(
+                            scaleToTarget(
+                                currObj, 
+                                new Vector3(
+                                    currTransform.localScale.z, 
+                                    binValDelta, 
+                                    currTransform.localScale.z
+                                ), 
+                                particleIndex, 
+                                currColor, 
+                                currColor
+                           )
+                        );
 
-                // the target object will always scale down to 0.1,1,1 (baseline scale) by default
-                currTransform.localScale = Vector3.Lerp(currTransform.localScale, new Vector3(baseline, 1, 1), 10 * Time.deltaTime);
+                        // scale back down
+                        currTransform.localScale = Vector3.Lerp(
+                            currTransform.localScale, 
+                            new Vector3(currTransform.localScale.x, baseline, currTransform.localScale.z), 
+                            10 * Time.deltaTime
+                        );
+                    }
+                    else
+                    {
+                        StartCoroutine(
+                            scaleToTarget(
+                                currObj, 
+                                new Vector3(
+                                    binValDelta,
+                                    currTransform.localScale.y,
+                                    currTransform.localScale.z
+                                ), 
+                                particleIndex, 
+                                currColor, 
+                                currColor
+                            )
+                        );
+
+                        currTransform.localScale = Vector3.Lerp(
+                            currTransform.localScale, 
+                            new Vector3(baseline, currTransform.localScale.y, currTransform.localScale.z), 
+                            10 * Time.deltaTime
+                        );
+                    }
+                }
             }
             else
             {
@@ -148,7 +195,6 @@ public class SpectrumVisualizer : VisualizerMultiple
         parent = new GameObject();
         spectrumData = audioData;
         prevSpectrumData = new float[sampleDataSize];
-        //visualizationStyle = "circle";
         prefill(prevSpectrumData, 0.0f);
         setupSpectrumDataPoints();
     }
@@ -157,16 +203,15 @@ public class SpectrumVisualizer : VisualizerMultiple
     {
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
-        
-        if(visualizationStyle == "circle") parent.transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 20f);
-        
-        if(camera){
-            Vector3 cameraPosition = camera.transform.position;
-            parent.transform.position = new Vector3(cameraPosition.x, cameraPosition.y, cameraPosition.z + distFromCamera);
 
-            if(visualizationStyle == "line") parent.transform.rotation = camera.transform.rotation;
+        if (camera)
+        {
+            Vector3 cameraPosition = camera.transform.position;
+            parent.transform.position = cameraPosition + (camera.transform.forward * distFromCamera);
+
+            if (visualizationStyle == "line") parent.transform.rotation = camera.transform.rotation;
         }
-        
-        //parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
+
+        parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
     }
 }

@@ -213,7 +213,7 @@ Transform:
   m_GameObject: {fileID: 51187162}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -234.64677, y: -2.4865258, z: -7.617281}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
@@ -862,10 +862,12 @@ MonoBehaviour:
   desiredFreqMax: 2000
   xCoord: 0
   yCoord: 0
-  zCoord: -20
+  zCoord: 0
   camera: {fileID: 0}
   distFromCamera: 0
   visualizationStyle: circle
+  orientation: vertical
+  circleRadius: 15
 --- !u!4 &1779460759
 Transform:
   m_ObjectHideFlags: 0
@@ -921,6 +923,7 @@ MonoBehaviour:
   zCoord: 0
   scaleFrom: {x: 10, y: 10, z: 10}
   scaleTo: {x: 15, y: 15, z: 15}
+  targetColor: {r: 0, g: 0, b: 0, a: 0}
   scaleToColorOnly: 0
   rotate: 1
 --- !u!65 &1780851851
