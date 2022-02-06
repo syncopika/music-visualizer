@@ -758,11 +758,14 @@ MonoBehaviour:
   desiredFreqMin: 50
   desiredFreqMax: 2000
   xCoord: -35
-  yCoord: -15
-  zCoord: -38
+  yCoord: -20
+  zCoord: 0
   camera: {fileID: 1190074003}
-  distFromCamera: 80
-  visualizationStyle: line
+  distFromCamera: 50
+  visualizationStyle: 1
+  orientation: 0
+  circleRadius: 0
+  rotateY: 0
 --- !u!114 &1766815652
 MonoBehaviour:
   m_ObjectHideFlags: 0
