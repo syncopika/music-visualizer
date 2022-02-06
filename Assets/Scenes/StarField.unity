@@ -762,9 +762,10 @@ MonoBehaviour:
   zCoord: 0
   camera: {fileID: 1190074003}
   distFromCamera: 50
-  visualizationStyle: line
-  orientation: 
+  visualizationStyle: 1
+  orientation: 0
   circleRadius: 0
+  rotateY: 0
 --- !u!114 &1766815652
 MonoBehaviour:
   m_ObjectHideFlags: 0

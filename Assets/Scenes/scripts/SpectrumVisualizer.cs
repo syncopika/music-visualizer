@@ -7,11 +7,25 @@ using UnityEngine;
 // this visualization consists of multiple objects in various configurations such as a circle or a line
 public class SpectrumVisualizer : VisualizerMultiple
 {
+
+    public enum VizStyles
+    {
+        Circle,
+        Line
+    };
+
+    public enum VizOrientations
+    {
+        Vertical,
+        Horizontal
+    };
+
     public Camera camera;
-    public float distFromCamera;      // based on z-axis
-    public string visualizationStyle; // circle or line
-    public string orientation;        // vertical or horizontal
+    public float distFromCamera;
+    public VizStyles visualizationStyle;
+    public VizOrientations orientation; 
     public float circleRadius;        // if visualization style is circle
+    public bool rotateY;
 
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
@@ -27,9 +41,9 @@ public class SpectrumVisualizer : VisualizerMultiple
         int targetIndexMax = (int)Math.Min(sampleDataSize - 1, desiredFreqMax / freqPerIndex);
         int numFreqBands = targetIndexMax - targetIndexMin;
 
-        if (visualizationStyle == "circle")
+        if (visualizationStyle == VizStyles.Circle)
         {
-            float radius = circleRadius; //15f;
+            float radius = circleRadius;
             float currAngle = 0f;
             float angleIncrement = 360f / numFreqBands;
 
@@ -37,9 +51,11 @@ public class SpectrumVisualizer : VisualizerMultiple
             {
                 GameObject newPoint;
                 float xCurr = xCoord + radius * Mathf.Cos(currAngle * (float)(Math.PI / 180f)); // radians
-                if (orientation == "horizontal")
+                if (orientation == VizOrientations.Horizontal)
                 {
                     float zCurr = zCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
+
+                    // TODO: rotate the particle such that they are facing towards the center of the circle?
                     newPoint = Instantiate(particle, new Vector3(xCurr, yCoord, zCurr), Quaternion.Euler(0, 0, 0));
                 }
                 else
@@ -114,13 +130,13 @@ public class SpectrumVisualizer : VisualizerMultiple
             // scale it based on spectrum bin value
             Color currColor = currObj.GetComponent<Renderer>().material.color;
 
-            if (visualizationStyle == "circle")
+            if (visualizationStyle == VizStyles.Circle)
             {
                 // circular pattern
                 if (binValDelta > 0 && isAnimatingArray[particleIndex] == false)
                 {
                     isAnimatingArray[particleIndex] = true;
-                    if (orientation == "horizontal")
+                    if (orientation == VizOrientations.Horizontal)
                     {
                         StartCoroutine(
                             scaleToTarget(
@@ -209,9 +225,9 @@ public class SpectrumVisualizer : VisualizerMultiple
             Vector3 cameraPosition = camera.transform.position;
             parent.transform.position = cameraPosition + (camera.transform.forward * distFromCamera);
 
-            if (visualizationStyle == "line") parent.transform.rotation = camera.transform.rotation;
+            if (visualizationStyle == VizStyles.Line) parent.transform.rotation = camera.transform.rotation;
         }
 
-        parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
+        if (rotateY) parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
     }
 }

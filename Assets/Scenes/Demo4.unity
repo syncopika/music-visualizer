@@ -482,9 +482,10 @@ MonoBehaviour:
   zCoord: 0
   camera: {fileID: 1057109865}
   distFromCamera: 80
-  visualizationStyle: circle
-  orientation: horizontal
+  visualizationStyle: 0
+  orientation: 1
   circleRadius: 38
+  rotateY: 0
 --- !u!4 &1254256966
 Transform:
   m_ObjectHideFlags: 0
