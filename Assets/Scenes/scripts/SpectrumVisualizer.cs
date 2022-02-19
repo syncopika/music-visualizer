@@ -20,8 +20,9 @@ public class SpectrumVisualizer : VisualizerMultiple
         Horizontal
     };
 
-    public Camera camera;
-    public float distFromCamera;
+    //public Camera camera;
+    //public float distFromCamera;
+    public GameObject centerpoint; // if we want a circular visualization around an object
     public VizStyles visualizationStyle;
     public VizOrientations orientation; 
     public float circleRadius;        // if visualization style is circle
@@ -213,6 +214,13 @@ public class SpectrumVisualizer : VisualizerMultiple
         prevSpectrumData = new float[sampleDataSize];
         prefill(prevSpectrumData, 0.0f);
         setupSpectrumDataPoints();
+
+        if (centerpoint)
+        {
+            xCoord = centerpoint.transform.position.x;
+            yCoord = centerpoint.transform.position.y;
+            zCoord = centerpoint.transform.position.z;
+        }
     }
 
     void Update()
@@ -220,6 +228,7 @@ public class SpectrumVisualizer : VisualizerMultiple
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
 
+        /* a specific camera script should probably be written instead to "chase" the visualization instead
         if (camera)
         {
             Vector3 cameraPosition = camera.transform.position;
@@ -227,6 +236,7 @@ public class SpectrumVisualizer : VisualizerMultiple
 
             if (visualizationStyle == VizStyles.Line) parent.transform.rotation = camera.transform.rotation;
         }
+        */
 
         if (rotateY) parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
     }
