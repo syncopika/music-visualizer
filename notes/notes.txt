@@ -11,10 +11,9 @@ https://365xr.blog/hololens-and-unity-tip-001-scaling-of-rotated-gameobjects/
 https://www.youtube.com/watch?v=PzVbaaxgPco -> Unity3D How To: Audio Visualizer With Spectrum Data
 https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-always-white.html
 https://answers.unity.com/questions/1751546/cant-get-local-rotation-of-object.html
-
+https://answers.unity.com/questions/986659/how-to-render-vertex-paint-in-unity3d.html
 
 TODO:
-- color gradient on plane based on spectrum data?
 - more sample scenes, more code refactoring for easier re-use
-- figure out recorder (why does it lag majorly initially when I turn it on?), output video quality
+- figure out the recorder (why does it lag majorly initially when I turn it on?), output video quality
 - test with multiple audio sources, not just one
