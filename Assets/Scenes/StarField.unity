@@ -760,8 +760,10 @@ MonoBehaviour:
   xCoord: -35
   yCoord: -20
   zCoord: 0
+  placeInFrontOfCamera: 1
   camera: {fileID: 1190074003}
   distFromCamera: 50
+  centerpoint: {fileID: 0}
   visualizationStyle: 1
   orientation: 0
   circleRadius: 0
