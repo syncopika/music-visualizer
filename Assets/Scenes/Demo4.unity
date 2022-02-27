@@ -423,7 +423,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1057109863}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 345, y: 74, z: -208.5}
+  m_LocalPosition: {x: 242, y: 74, z: -141.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -480,11 +480,13 @@ MonoBehaviour:
   xCoord: 0
   yCoord: 0
   zCoord: 0
+  placeInFrontOfCamera: 0
   camera: {fileID: 1057109865}
-  distFromCamera: 80
+  distFromCamera: 20
+  centerpoint: {fileID: 2110299284}
   visualizationStyle: 0
   orientation: 1
-  circleRadius: 38
+  circleVisualizationRadius: 40
   rotateY: 0
 --- !u!4 &1254256966
 Transform:
@@ -778,7 +780,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110299284}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 241, y: 21.7, z: -155}
+  m_LocalPosition: {x: 165.3, y: 15, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_Children: []
   m_Father: {fileID: 0}

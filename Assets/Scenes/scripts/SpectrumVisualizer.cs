@@ -20,11 +20,17 @@ public class SpectrumVisualizer : VisualizerMultiple
         Horizontal
     };
 
+
+    // https://stackoverflow.com/questions/58441744/how-to-enable-disable-a-list-in-unity-inspector-using-a-bool
+    // https://stackoverflow.com/questions/47430785/how-to-hide-variables-depending-on-other-variables-values-in-unity-inspector
+    public bool placeInFrontOfCamera;
     public Camera camera;
     public float distFromCamera;
+    
+    public GameObject centerpoint; // if we want a circular visualization around an object
     public VizStyles visualizationStyle;
-    public VizOrientations orientation; 
-    public float circleRadius;        // if visualization style is circle
+    public VizOrientations orientation;
+    public float circleVisualizationRadius;        // if visualization style is circle
     public bool rotateY;
 
     private float[] spectrumData;
@@ -43,7 +49,7 @@ public class SpectrumVisualizer : VisualizerMultiple
 
         if (visualizationStyle == VizStyles.Circle)
         {
-            float radius = circleRadius;
+            float radius = circleVisualizationRadius;
             float currAngle = 0f;
             float angleIncrement = 360f / numFreqBands;
 
@@ -63,7 +69,7 @@ public class SpectrumVisualizer : VisualizerMultiple
                     float yCurr = yCoord + radius * Mathf.Sin(currAngle * (float)(Math.PI / 180f));
                     newPoint = Instantiate(particle, new Vector3(xCurr, yCurr, zCoord), Quaternion.Euler(0, 0, currAngle));
                 }
-                
+
                 newPoint.name = ("spectrumPoint_" + i);
 
                 // change color for each freq band
@@ -118,7 +124,7 @@ public class SpectrumVisualizer : VisualizerMultiple
         {
             GameObject currObj = objectsArray[particleIndex];
             Transform currTransform = currObj.transform;
-            float binValDelta = 90*(spectrumData[i] - prevSpectrumData[i]);
+            float binValDelta = 90 * (spectrumData[i] - prevSpectrumData[i]);
             float baseline = 0.1f;
 
             // save the current rotation
@@ -140,22 +146,22 @@ public class SpectrumVisualizer : VisualizerMultiple
                     {
                         StartCoroutine(
                             scaleToTarget(
-                                currObj, 
+                                currObj,
                                 new Vector3(
-                                    currTransform.localScale.z, 
-                                    binValDelta, 
+                                    currTransform.localScale.z,
+                                    binValDelta,
                                     currTransform.localScale.z
-                                ), 
-                                particleIndex, 
-                                currColor, 
+                                ),
+                                particleIndex,
+                                currColor,
                                 currColor
                            )
                         );
 
                         // scale back down
                         currTransform.localScale = Vector3.Lerp(
-                            currTransform.localScale, 
-                            new Vector3(currTransform.localScale.x, baseline, currTransform.localScale.z), 
+                            currTransform.localScale,
+                            new Vector3(currTransform.localScale.x, baseline, currTransform.localScale.z),
                             10 * Time.deltaTime
                         );
                     }
@@ -163,21 +169,21 @@ public class SpectrumVisualizer : VisualizerMultiple
                     {
                         StartCoroutine(
                             scaleToTarget(
-                                currObj, 
+                                currObj,
                                 new Vector3(
                                     binValDelta,
                                     currTransform.localScale.y,
                                     currTransform.localScale.z
-                                ), 
-                                particleIndex, 
-                                currColor, 
+                                ),
+                                particleIndex,
+                                currColor,
                                 currColor
                             )
                         );
 
                         currTransform.localScale = Vector3.Lerp(
-                            currTransform.localScale, 
-                            new Vector3(baseline, currTransform.localScale.y, currTransform.localScale.z), 
+                            currTransform.localScale,
+                            new Vector3(baseline, currTransform.localScale.y, currTransform.localScale.z),
                             10 * Time.deltaTime
                         );
                     }
@@ -190,7 +196,7 @@ public class SpectrumVisualizer : VisualizerMultiple
                 {
                     isAnimatingArray[particleIndex] = true;
                     StartCoroutine(
-                        scaleToTarget(currObj, new Vector3(binValDelta*0.2f, binValDelta*1.1f, 1), particleIndex, currColor, currColor)
+                        scaleToTarget(currObj, new Vector3(binValDelta * 0.2f, binValDelta * 1.1f, 1), particleIndex, currColor, currColor)
                     );
                 }
 
@@ -212,6 +218,14 @@ public class SpectrumVisualizer : VisualizerMultiple
         spectrumData = audioData;
         prevSpectrumData = new float[sampleDataSize];
         prefill(prevSpectrumData, 0.0f);
+
+        if (centerpoint)
+        {
+            xCoord = centerpoint.transform.position.x;
+            yCoord = centerpoint.transform.position.y;
+            zCoord = centerpoint.transform.position.z;
+        }
+
         setupSpectrumDataPoints();
     }
 
@@ -220,11 +234,12 @@ public class SpectrumVisualizer : VisualizerMultiple
         audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
         displaySpectrum(spectrumData);
 
-        if (camera)
+        // TODO: a specific camera script should probably be written instead to "chase" the visualization instead
+        // but then should this visualization be able to move along the z-axis (into the screen)?
+        if (placeInFrontOfCamera && camera)
         {
             Vector3 cameraPosition = camera.transform.position;
             parent.transform.position = cameraPosition + (camera.transform.forward * distFromCamera);
-
             if (visualizationStyle == VizStyles.Line) parent.transform.rotation = camera.transform.rotation;
         }
 

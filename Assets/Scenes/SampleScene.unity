@@ -863,11 +863,13 @@ MonoBehaviour:
   xCoord: 0
   yCoord: 0
   zCoord: 0
-  camera: {fileID: 0}
-  distFromCamera: 0
+  placeInFrontOfCamera: 1
+  camera: {fileID: 534669904}
+  distFromCamera: 60
+  centerpoint: {fileID: 0}
   visualizationStyle: 0
   orientation: 0
-  circleRadius: 15
+  circleVisualizationRadius: 20
   rotateY: 0
 --- !u!4 &1779460759
 Transform:
