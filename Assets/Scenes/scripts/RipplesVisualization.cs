@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoftSpheresVisualization : VisualizerMultiple
+public class RipplesVisualization : VisualizerMultiple
 {
     public bool placeInFrontOfCamera;
     //Camera camera; // TODO: remove? we always assume there's only one camera and it's the main cam
@@ -28,31 +28,25 @@ public class SoftSpheresVisualization : VisualizerMultiple
         {
             float yPos = UnityEngine.Random.Range(0f, 1f);
             float xPos = UnityEngine.Random.Range(0f, 1f);
-            float zPos = 30f;
+            float zPos = 55f;
 
             Vector3 newPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, zPos));
 
-            GameObject newSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            newSphere.transform.position = newPos;
-            newSphere.transform.rotation = UnityEngine.Random.rotation;
-            newSphere.transform.parent = parent.transform;
+            GameObject newRipple = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            newRipple.transform.position = newPos;
+            newRipple.transform.Rotate(new Vector3(-90, 0, 0));
+            //newRipple.transform.rotation = UnityEngine.Random.rotation;
+            newRipple.transform.parent = parent.transform;
 
-            // TODO: add shader to newSphere + script
-            newSphere.GetComponent<Renderer>().material = shaderMaterial;
-            /* specify:
-             *  float _Speed;
-             *  float _Density;
-             *  float _Strength;
-             *  float _Brightness;
-            */
-            newSphere.GetComponent<Renderer>().material.SetFloat("_Speed", 1.8f);
-            newSphere.GetComponent<Renderer>().material.SetFloat("_Density", 120f);
-            newSphere.GetComponent<Renderer>().material.SetFloat("_Strength", 2f);
-            newSphere.GetComponent<Renderer>().material.SetFloat("_Brightness", 1f);
-            newSphere.GetComponent<Renderer>().material.SetVector("color", new Vector4(0.3f, 0.6f, 1, 0.8f));
-            newSphere.GetComponent<Renderer>().material.SetVector("center", new Vector2(0.5f, 0.5f));
+            newRipple.GetComponent<Renderer>().material = shaderMaterial;
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Speed", 1.8f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Density", 100f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Strength", 1.2f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Brightness", 1f);
+            newRipple.GetComponent<Renderer>().material.SetVector("color", new Vector4(0.3f, 0.6f, 1, 0.8f));
+            newRipple.GetComponent<Renderer>().material.SetVector("center", new Vector2(0.5f, 0.5f));
 
-            objectsArray.Add(newSphere);
+            objectsArray.Add(newRipple);
             isAnimatingArray.Add(false);
         }
     }
@@ -77,6 +71,8 @@ public class SoftSpheresVisualization : VisualizerMultiple
             // https://github.com/twostraws/ShaderKit/blob/main/Shaders/SHKCircleWaveBlended.fsh
             // https://answers.unity.com/questions/1409060/is-there-any-way-to-create-a-dynamic-material-when.html
             // https://answers.unity.com/questions/55402/how-to-pass-custom-variables-to-shaders.html
+
+            currTransform.GetComponent<Renderer>().material.SetFloat("freqBinDelta", binValDelta);
 
             particleIndex++;
         }

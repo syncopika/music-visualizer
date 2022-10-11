@@ -1,4 +1,4 @@
-Shader "Unlit/SoftSphere"
+Shader "Unlit/Ripple"
 {
     Properties
     {
@@ -10,12 +10,12 @@ Shader "Unlit/SoftSphere"
     }
     SubShader
     {
-        //Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-        Tags { "RenderType" = "Opaque" }
+        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+        //Tags { "RenderType" = "Opaque" }
         LOD 100
 
-        //ZWrite Off
-        //Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -47,6 +47,9 @@ Shader "Unlit/SoftSphere"
             float _Strength;
             float _Brightness;
 
+            // freq bin value
+            float freqBinDelta;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -63,9 +66,13 @@ Shader "Unlit/SoftSphere"
                 // https://github.com/twostraws/ShaderKit/blob/main/Shaders/SHKCircleWaveBlended.fsh
                 // maybe helpful? https://stackoverflow.com/questions/41405498/how-can-i-make-gradient-sphere-on-glsl
                 float waveSpeed = -(_Time.y * _Speed * 10.0);
+                if (freqBinDelta != 0) waveSpeed *= freqBinDelta * 100.0;
+
                 float3 brightness = float3(_Brightness, _Brightness, _Brightness);
                 float pixelDistance = distance(i.uv, center);
                 float3 gradientColor = float3(color.r, color.g, color.b) * brightness;
+
+                if (freqBinDelta > 0) gradientColor.g *= freqBinDelta * 10.0;
 
                 float colorStrength = pow(1.0 - pixelDistance, 3.0);
                 colorStrength *= _Strength;
@@ -84,8 +91,11 @@ Shader "Unlit/SoftSphere"
                 // https://alastaira.wordpress.com/2015/08/07/unity-shadertoys-a-k-a-converting-glsl-shaders-to-cghlsl/
                 float4 finalColor = lerp(col, final, lumi) * col.w;
 
+                if (finalColor.r > 0.9 && finalColor.g > 0.9 && finalColor.b > 0.9) {
+                    finalColor.a = 0;
+                }
+
                 return finalColor;
-                //return col;
             }
             ENDCG
         }
