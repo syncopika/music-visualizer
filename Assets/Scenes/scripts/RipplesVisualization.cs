@@ -13,6 +13,10 @@ public class RipplesVisualization : VisualizerMultiple
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private GameObject parent;
+
+    private float timeInterval = 0.1f; // wait n sec before updating visualization
+    private float timeElapsed = 0f;
+    private bool started = false;
     private void setupSpectrumDataPoints()
     {
         int sampleRate = AudioSettings.outputSampleRate;
@@ -24,11 +28,15 @@ public class RipplesVisualization : VisualizerMultiple
         int numFreqBands = targetIndexMax - targetIndexMin;
 
         // assign random locations to each sphere representing a freq bin
+        //float xInterval = 1f/numFreqBands + 0.01f;
+        //float xStart = 0f;
         for(int i = 0; i < numFreqBands; i++)
         {
             float yPos = UnityEngine.Random.Range(0f, 1f);
             float xPos = UnityEngine.Random.Range(0f, 1f);
-            float zPos = 55f;
+            float zPos = 60f;
+
+            //xStart += xInterval;
 
             Vector3 newPos = Camera.main.ViewportToWorldPoint(new Vector3(xPos, yPos, zPos));
 
@@ -39,9 +47,9 @@ public class RipplesVisualization : VisualizerMultiple
             newRipple.transform.parent = parent.transform;
 
             newRipple.GetComponent<Renderer>().material = shaderMaterial;
-            newRipple.GetComponent<Renderer>().material.SetFloat("_Speed", 1.8f);
-            newRipple.GetComponent<Renderer>().material.SetFloat("_Density", 100f);
-            newRipple.GetComponent<Renderer>().material.SetFloat("_Strength", 1.2f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Speed", 1.1f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Density", 60f);
+            newRipple.GetComponent<Renderer>().material.SetFloat("_Strength", 2f);
             newRipple.GetComponent<Renderer>().material.SetFloat("_Brightness", 1f);
             newRipple.GetComponent<Renderer>().material.SetVector("color", new Vector4(0.3f, 0.6f, 1, 0.8f));
             newRipple.GetComponent<Renderer>().material.SetVector("center", new Vector2(0.5f, 0.5f));
@@ -92,7 +100,14 @@ public class RipplesVisualization : VisualizerMultiple
 
     void Update()
     {
-        audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
-        displaySpectrum(spectrumData);
+        if (timeElapsed >= timeInterval || !started)
+        {
+            audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+            displaySpectrum(spectrumData);
+            timeElapsed = 0f;
+            started = true;
+        }
+
+        timeElapsed += Time.deltaTime;
     }
 }

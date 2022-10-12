@@ -66,13 +66,19 @@ Shader "Unlit/Ripple"
                 // https://github.com/twostraws/ShaderKit/blob/main/Shaders/SHKCircleWaveBlended.fsh
                 // maybe helpful? https://stackoverflow.com/questions/41405498/how-can-i-make-gradient-sphere-on-glsl
                 float waveSpeed = -(_Time.y * _Speed * 10.0);
-                if (freqBinDelta != 0) waveSpeed *= freqBinDelta * 100.0;
+                //if (freqBinDelta != 0) waveSpeed *= freqBinDelta * 5.0;
 
                 float3 brightness = float3(_Brightness, _Brightness, _Brightness);
                 float pixelDistance = distance(i.uv, center);
+
+                if (pixelDistance > 0.3) {
+                    // make transparent
+                    return float4(1.0, 1.0, 1.0, 0);
+                }
+
                 float3 gradientColor = float3(color.r, color.g, color.b) * brightness;
 
-                if (freqBinDelta > 0) gradientColor.g *= freqBinDelta * 10.0;
+                if (freqBinDelta > 0) gradientColor.g *= freqBinDelta * 5.0;
 
                 float colorStrength = pow(1.0 - pixelDistance, 3.0);
                 colorStrength *= _Strength;
@@ -91,9 +97,8 @@ Shader "Unlit/Ripple"
                 // https://alastaira.wordpress.com/2015/08/07/unity-shadertoys-a-k-a-converting-glsl-shaders-to-cghlsl/
                 float4 finalColor = lerp(col, final, lumi) * col.w;
 
-                if (finalColor.r > 0.9 && finalColor.g > 0.9 && finalColor.b > 0.9) {
-                    finalColor.a = 0;
-                }
+                // make alpha be a function of distance from center
+                finalColor.a = pixelDistance / 5.0;
 
                 return finalColor;
             }
