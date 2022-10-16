@@ -11,11 +11,13 @@ public class RipplesVisualization : VisualizerMultiple
     public Material shaderMaterial;
     public Color color; // new Vector4(0.3f, 0.6f, 1, 0.8f)
 
+    public GameObject plane1;
+
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private GameObject parent;
 
-    private float timeToWait = 0.3f; // wait n sec before updating visualization
+    private float timeToWait = 0.25f; // wait n sec before updating visualization
     private float timeElapsed = 0f;
     private bool started = false;
     private void setupSpectrumDataPoints()
@@ -46,6 +48,7 @@ public class RipplesVisualization : VisualizerMultiple
             newRipple.transform.Rotate(new Vector3(-90, 0, 0));
             //newRipple.transform.rotation = UnityEngine.Random.rotation;
             newRipple.transform.parent = parent.transform;
+            newRipple.transform.localScale += new Vector3(0.02f * i, 0.02f * i, 0.02f * i); // size of ripples based on freq
 
             newRipple.GetComponent<Renderer>().material = shaderMaterial;
             newRipple.GetComponent<Renderer>().material.SetFloat("_Speed", 1.1f);
@@ -106,6 +109,8 @@ public class RipplesVisualization : VisualizerMultiple
         prefill(prevSpectrumData, 0.0f);
 
         setupSpectrumDataPoints();
+
+        plane1.transform.Rotate(new Vector3(0, 1, 0), 180);
     }
 
     void Update()
