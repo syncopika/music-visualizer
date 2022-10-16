@@ -437,6 +437,7 @@ MonoBehaviour:
   placeInFrontOfCamera: 0
   distFromCamera: 0
   shaderMaterial: {fileID: 2100000, guid: 0bfb1b1e613dafa478776df85f294639, type: 2}
+  color: {r: 0.4091272, g: 0.8584906, b: 0.16602883, a: 0}
 --- !u!4 &1918476345
 Transform:
   m_ObjectHideFlags: 0

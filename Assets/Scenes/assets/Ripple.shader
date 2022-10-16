@@ -6,7 +6,7 @@ Shader "Unlit/Ripple"
 
         _Density("Density", float) = 100
         _Strength("Strength", float) = 2
-        _Brightness("Brightness", float) = 0.3
+        _Brightness("Brightness", float) = 0.5
     }
     SubShader
     {
@@ -76,9 +76,14 @@ Shader "Unlit/Ripple"
                     return float4(1.0, 1.0, 1.0, 0);
                 }
 
+                if (color.r == 1 && color.g == 1 && color.b == 1 && color.a == 0) {
+                    return float4(1.0, 1.0, 1.0, 0);
+                }
+
                 float3 gradientColor = float3(color.r, color.g, color.b) * brightness;
 
-                if (freqBinDelta > 0) gradientColor.g *= freqBinDelta * 5.0;
+                // set gradient color to be a function of the freq bin delta
+                if (freqBinDelta > 0) gradientColor *= freqBinDelta * 2.0;
 
                 float colorStrength = pow(1.0 - pixelDistance, 3.0);
                 colorStrength *= _Strength;
@@ -98,7 +103,7 @@ Shader "Unlit/Ripple"
                 float4 finalColor = lerp(col, final, lumi) * col.w;
 
                 // make alpha be a function of distance from center
-                finalColor.a = pixelDistance / 5.0;
+                finalColor.a = pixelDistance / 4.0;
 
                 return finalColor;
             }

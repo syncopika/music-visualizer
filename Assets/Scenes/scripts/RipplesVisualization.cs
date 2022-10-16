@@ -9,12 +9,13 @@ public class RipplesVisualization : VisualizerMultiple
     //Camera camera; // TODO: remove? we always assume there's only one camera and it's the main cam
     public float distFromCamera;
     public Material shaderMaterial;
+    public Color color; // new Vector4(0.3f, 0.6f, 1, 0.8f)
 
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
     private GameObject parent;
 
-    private float timeInterval = 0.1f; // wait n sec before updating visualization
+    private float timeToWait = 0.3f; // wait n sec before updating visualization
     private float timeElapsed = 0f;
     private bool started = false;
     private void setupSpectrumDataPoints()
@@ -51,7 +52,7 @@ public class RipplesVisualization : VisualizerMultiple
             newRipple.GetComponent<Renderer>().material.SetFloat("_Density", 60f);
             newRipple.GetComponent<Renderer>().material.SetFloat("_Strength", 2f);
             newRipple.GetComponent<Renderer>().material.SetFloat("_Brightness", 1f);
-            newRipple.GetComponent<Renderer>().material.SetVector("color", new Vector4(0.3f, 0.6f, 1, 0.8f));
+            newRipple.GetComponent<Renderer>().material.SetVector("color", color);
             newRipple.GetComponent<Renderer>().material.SetVector("center", new Vector2(0.5f, 0.5f));
 
             objectsArray.Add(newRipple);
@@ -80,6 +81,15 @@ public class RipplesVisualization : VisualizerMultiple
             // https://answers.unity.com/questions/1409060/is-there-any-way-to-create-a-dynamic-material-when.html
             // https://answers.unity.com/questions/55402/how-to-pass-custom-variables-to-shaders.html
 
+            if(Mathf.Abs(binValDelta) < 1f)
+            {
+                currObj.GetComponent<Renderer>().material.SetVector("color", new Vector4(1f, 1f, 1f, 0f));
+            }
+            else
+            {
+                currObj.GetComponent<Renderer>().material.SetVector("color", color);
+            }
+
             currTransform.GetComponent<Renderer>().material.SetFloat("freqBinDelta", binValDelta);
 
             particleIndex++;
@@ -100,7 +110,7 @@ public class RipplesVisualization : VisualizerMultiple
 
     void Update()
     {
-        if (timeElapsed >= timeInterval || !started)
+        if (timeElapsed >= timeToWait || !started)
         {
             audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
             displaySpectrum(spectrumData);
