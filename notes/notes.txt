@@ -18,3 +18,15 @@ TODO:
 - more sample scenes, more code refactoring for easier re-use
 - figure out recorder (why does it lag majorly initially when I turn it on?), output video quality
 - test with multiple audio sources, not just one
+
+about the recorder.cs file 
+- an attempt at an alternative to the built-in Unity Recorder
+- captures frames of the editor and puts them in a dir
+- how to use: attach it to the Main Camera of a scene
+- press play
+- stop when the audio ends (yeah this is manual atm lol :/)
+- then use ffmpeg to create an mp4 or whatever with the captured frames and audio file
+  - might have to fiddle with the framerate flag a bit when using ffmpeg as the frame capture rate might have been inaccurate
+
+ffmpeg example with recorder.cs output:
+ffmpeg -framerate 10 -i frames/%d.png -i audio.wav -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -preset slow -crf 22 -pix_fmt yuv420p -b:a 128k output.mp4
