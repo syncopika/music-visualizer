@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
+// this script is for recording the editor on play (but needs to be stopped manually to stop capturing frames)
+// then you can use ffmpeg to combine the captured frames with audio to make a video.
+// how to use: attach to the Main Camera of a scene
+
 // potentially helpful
 // https://docs.unity3d.com/ScriptReference/MonoBehaviour.FixedUpdate.html
 // https://docs.unity3d.com/ScriptReference/Texture2D.ReadPixels.html

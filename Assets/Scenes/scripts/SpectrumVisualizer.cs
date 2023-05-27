@@ -5,6 +5,7 @@ using UnityEngine;
 
 // visualizer based on frequency (full spectrum)
 // this visualization consists of multiple objects in various configurations such as a circle or a line
+// TODO: make params less confusing, or maybe need to separate different configurations into their own scripts rather than try to do everything here
 public class SpectrumVisualizer : VisualizerMultiple
 {
 
