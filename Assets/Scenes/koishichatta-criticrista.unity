@@ -160,7 +160,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.90299445, g: 0.6035511, b: 0.9339623, a: 1}
+  m_BackGroundColor: {r: 0.9569426, g: 0.8851015, b: 0.9622642, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -489,9 +489,10 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 120
-  yRange: 50
+  xRange: 130
+  yRange: 80
   zRange: 90
+  applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
 --- !u!4 &1005348186
@@ -642,9 +643,10 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 120
-  yRange: 60
+  xRange: 130
+  yRange: 80
   zRange: 90
+  applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
 --- !u!4 &1281411530
@@ -791,7 +793,7 @@ MonoBehaviour:
   desiredFreqMax: 2000
   xCoord: -38
   yCoord: -15
-  zCoord: 30
+  zCoord: 35
   placeInFrontOfCamera: 0
   camera: {fileID: 0}
   distFromCamera: 0
@@ -951,9 +953,10 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 120
-  yRange: 50
+  xRange: 130
+  yRange: 80
   zRange: 90
+  applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
 --- !u!4 &1771163355
@@ -1009,9 +1012,10 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 120
-  yRange: 50
+  xRange: 130
+  yRange: 80
   zRange: 90
+  applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
 --- !u!4 &2044306957

@@ -4,10 +4,12 @@ using UnityEngine;
 
 public enum MoveDirection
 {
-    VerticalDown,
-    VerticalUp,
-    HorizontalLeft,
-    HorizontalRight,
+    Down,
+    Up,
+    Left,
+    Right,
+    Forward,
+    Backward
 }
 public class MovingParticles : VisualizerMultiple
 {
@@ -15,8 +17,9 @@ public class MovingParticles : VisualizerMultiple
     public int xRange;
     public int yRange;
     public int zRange;
+    public bool applySpectrumData; // whether to adjust particle scale based on spectrum data
     public float objScaleFactor = 1f;
-    public MoveDirection moveDir = MoveDirection.VerticalDown;
+    public MoveDirection moveDir = MoveDirection.Down;
 
     private float[] spectrumData;
     private float[] prevSpectrumData;   // keep track of previous spectrum data
@@ -117,7 +120,7 @@ public class MovingParticles : VisualizerMultiple
     {
         switch (moveDir)
         {
-            case MoveDirection.VerticalDown:
+            case MoveDirection.Down:
                 {
                     foreach (GameObject obj in objectsArray)
                     {
@@ -129,16 +132,16 @@ public class MovingParticles : VisualizerMultiple
                             // fyi: https://answers.unity.com/questions/225729/gameobject-positionset-not-working.html
                             // transform.position returns a copy/value not a ref
                             Vector3 initial = initialPositions[obj.name];
-                            obj.transform.position = new Vector3(initial.x, initial.y + 15, initial.z);
+                            obj.transform.position = new Vector3(initial.x, initial.y + 20, initial.z);
                         }
                     }
                 }
                 break;
-            case MoveDirection.VerticalUp:
+            case MoveDirection.Up:
                 {
                     foreach (GameObject obj in objectsArray)
                     {
-                        obj.transform.Translate(new Vector3(0, 0.05f, 0));
+                        obj.transform.Translate(new Vector3(0, 0.05f, 0), Space.World);
 
                         if (obj.transform.position.y > 15)
                         {
@@ -148,12 +151,40 @@ public class MovingParticles : VisualizerMultiple
                     }
                 }
                 break;
-            case MoveDirection.HorizontalLeft:
+            case MoveDirection.Backward:
+                {
+                    foreach (GameObject obj in objectsArray)
+                    {
+                        obj.transform.Translate(new Vector3(0, 0, -0.05f), Space.World);
+
+                        if (obj.transform.position.z < -5)
+                        {
+                            Vector3 initial = initialPositions[obj.name];
+                            obj.transform.position = new Vector3(initial.x, initial.y, initial.z + 10);
+                        }
+                    }
+                }
+                break;
+            case MoveDirection.Forward:
+                {
+                    foreach (GameObject obj in objectsArray)
+                    {
+                        obj.transform.Translate(new Vector3(0, 0, 0.05f), Space.World);
+
+                        if (obj.transform.position.z > 100)
+                        {
+                            Vector3 initial = initialPositions[obj.name];
+                            obj.transform.position = new Vector3(initial.x, initial.y, initial.z - 10);
+                        }
+                    }
+                }
+                break;
+            case MoveDirection.Left:
                 {
                     // TODO
                 }
                 break;
-            case MoveDirection.HorizontalRight:
+            case MoveDirection.Right:
                 {
                     // TODO
                 }
@@ -168,8 +199,11 @@ public class MovingParticles : VisualizerMultiple
 
     void Update()
     {
-        audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
-        displaySpectrum(spectrumData);
+        if (applySpectrumData)
+        {
+            audioSrc.GetSpectrumData(spectrumData, 0, FFTWindow.BlackmanHarris);
+            displaySpectrum(spectrumData);
+        }
         rotateAll();
         moveAll();
     }
