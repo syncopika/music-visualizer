@@ -3,6 +3,26 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
+// edit: welp, this doesn't really work well. 
+// one major issue is that image quality with the editor screen at normal size is poor
+// if you want to get better pngs to work with, you can maximize the editor window on play
+// but then that causes issues because suddenly the captured frames are larger, which means
+// more data that needs to be processed, which means more time is needed, which means more lag :(
+//
+// e.g. encodetopng kinda slows things down and then I saw
+// https://stackoverflow.com/questions/36186209/take-screenshot-in-unity3d-with-no-lags which
+// talked about using saving raw texture data before encoding, which I thought I could do after recording
+// all the frames but rawtexturedata is large (like mb vs kb for pngs)
+// framerate in the editor seemed better but there were some large lag spikes for some reason
+//
+// additionally, I couldn't figure out how I'd convert those saved textures to pngs after exiting play mode
+// in this script. maybe something to check out later to see if it's possible for fun (also maybe multithreading would help?) 
+//
+// but fortunately the built-in unity recorder works well enough. what's needed though is a slight delay before the audio plays,
+// which is fairly trivial via script. as for why though, 
+// this seems to explain well: https://forum.unity.com/threads/recorder-missing-the-first-few-frames-of-audio-when-driven-by-timeline.1116967/
+
+
 // this script is for recording the editor on play (but needs to be stopped manually to stop capturing frames)
 // then you can use ffmpeg to combine the captured frames with audio to make a video.
 // how to use: attach to the Main Camera of a scene
@@ -11,6 +31,7 @@ using System.IO;
 // https://docs.unity3d.com/ScriptReference/MonoBehaviour.FixedUpdate.html
 // https://docs.unity3d.com/ScriptReference/Texture2D.ReadPixels.html
 // https://www.reddit.com/r/Unity3D/comments/8oo6d6/waitforseconds_framerate_dependant/
+// https://gamedev.stackexchange.com/questions/169294/high-performance-screenshots-in-lwrp/169396#169396
 
 public class Recorder : MonoBehaviour
 {

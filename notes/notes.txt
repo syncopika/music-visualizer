@@ -20,13 +20,32 @@ TODO:
 - test with multiple audio sources, not just one
 
 about the recorder.cs file 
-- an attempt at an alternative to the built-in Unity Recorder
+- an attempt at an alternative to the built-in Unity Recorder (doesn't work that well)
 - captures frames of the editor and puts them in a dir
 - how to use: attach it to the Main Camera of a scene
 - press play
 - stop when the audio ends (yeah this is manual atm lol :/)
 - then use ffmpeg to create an mp4 or whatever with the captured frames and audio file
   - might have to fiddle with the framerate flag a bit when using ffmpeg as the frame capture rate might have been inaccurate
+
+// one major issue is that image quality with the editor screen at normal size is poor
+// if you want to get better pngs to work with, you can maximize the editor window on play
+// but then that causes issues because suddenly the captured frames are larger, which means
+// more data that needs to be processed, which means more time is needed, which means more lag :(
+//
+// e.g. encodeToPng kinda slows things down and then I saw
+// https://stackoverflow.com/questions/36186209/take-screenshot-in-unity3d-with-no-lags which
+// talked about using saving raw texture data before encoding, which I thought I could do after recording
+// all the frames but rawtexturedata is large (like mb vs kb for pngs)
+// framerate in the editor seemed better but there were some large lag spikes for some reason
+//
+// additionally, I couldn't figure out how I'd convert those saved textures to pngs after exiting play mode
+// in this script. maybe something to check out later to see if it's possible for fun (also maybe multithreading would help?) 
+//
+// but the built-in unity recorder works well enough. what's needed though is a slight delay before the audio plays,
+// which is fairly trivial via script. as for why though, 
+// this seems to explain well: https://forum.unity.com/threads/recorder-missing-the-first-few-frames-of-audio-when-driven-by-timeline.1116967/
+
 
 ffmpeg example with recorder.cs output:
 ffmpeg -framerate 10 -i frames/%d.png -i audio.wav -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -preset slow -crf 22 -pix_fmt yuv420p -b:a 128k output.mp4
