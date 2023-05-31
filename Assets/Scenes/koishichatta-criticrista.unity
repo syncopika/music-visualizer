@@ -218,7 +218,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3e686357071bfee41b2e1d17043adc13, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 90c895018adbab140a46b60d4cb81159, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -490,7 +490,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1005348184}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ec4001ba26a3c247884e6d6d7679b07, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ba933b0d52908b4e9632147e23adcf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 919132149155446097, guid: 47aadc81719db904c817da246d21141e, type: 3}
@@ -503,9 +503,9 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 130
+  xRange: 80
   yRange: 80
-  zRange: 90
+  zRange: 100
   applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1281411528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ec4001ba26a3c247884e6d6d7679b07, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ba933b0d52908b4e9632147e23adcf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 919132149155446097, guid: a2928e34b88331e4cbe82e30f8fe109e, type: 3}
@@ -657,9 +657,9 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 130
+  xRange: 80
   yRange: 80
-  zRange: 90
+  zRange: 100
   applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
@@ -954,7 +954,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1771163353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ec4001ba26a3c247884e6d6d7679b07, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ba933b0d52908b4e9632147e23adcf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 919132149155446097, guid: 0987fd4d1916db34197367d50256bff1, type: 3}
@@ -967,9 +967,9 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 130
+  xRange: 80
   yRange: 80
-  zRange: 90
+  zRange: 100
   applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2044306955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ec4001ba26a3c247884e6d6d7679b07, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ba933b0d52908b4e9632147e23adcf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   particle: {fileID: 919132149155446097, guid: a9c1a18b0aaa98b45a303e9569c661c0, type: 3}
@@ -1026,9 +1026,9 @@ MonoBehaviour:
   yCoord: 0
   zCoord: 0
   numObjects: 30
-  xRange: 130
+  xRange: 80
   yRange: 80
-  zRange: 90
+  zRange: 100
   applySpectrumData: 0
   objScaleFactor: 1
   moveDir: 0
