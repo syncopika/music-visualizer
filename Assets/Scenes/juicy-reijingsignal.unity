@@ -555,6 +555,21 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!114 &953313347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953313342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 492084abe1a667d4990e3453f0bdd7b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSrcParent: {fileID: 782281183}
+  startTime: 1.5
+  endTime: 135
 --- !u!1001 &1101764913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -681,6 +696,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: juicy
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e41fd64f16f583d47861bc72c9d455f6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2786534777698132407, guid: e41fd64f16f583d47861bc72c9d455f6,
         type: 3}
