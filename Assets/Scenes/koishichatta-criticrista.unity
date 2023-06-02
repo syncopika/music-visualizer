@@ -879,7 +879,7 @@ MonoBehaviour:
   sampleDataSize: 512
   desiredFreqMin: 50
   desiredFreqMax: 2000
-  xCoord: -38
+  xCoord: -37
   yCoord: -15
   zCoord: 35
   placeInFrontOfCamera: 0
