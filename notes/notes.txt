@@ -11,41 +11,11 @@ https://365xr.blog/hololens-and-unity-tip-001-scaling-of-rotated-gameobjects/
 https://www.youtube.com/watch?v=PzVbaaxgPco -> Unity3D How To: Audio Visualizer With Spectrum Data
 https://answers.unity.com/questions/1244968/changing-text-color-at-runtime-always-white.html
 https://answers.unity.com/questions/1751546/cant-get-local-rotation-of-object.html
+https://forum.unity.com/threads/recorder-missing-the-first-few-frames-of-audio-when-driven-by-timeline.1116967/
+https://vionixstudio.com/2022/02/21/how-to-create-a-glow-effect-in-unity/
 
 
 TODO:
 - color gradient on plane based on spectrum data?
-- more sample scenes, more code refactoring for easier re-use
-- figure out recorder (why does it lag majorly initially when I turn it on?), output video quality
+- more sample scenes, more code refactoring for easier re-use, clarify some parameters for scripts (or just remove)
 - test with multiple audio sources, not just one
-
-about the recorder.cs file 
-- an attempt at an alternative to the built-in Unity Recorder (doesn't work that well)
-- captures frames of the editor and puts them in a dir
-- how to use: attach it to the Main Camera of a scene
-- press play
-- stop when the audio ends (yeah this is manual atm lol :/)
-- then use ffmpeg to create an mp4 or whatever with the captured frames and audio file
-  - might have to fiddle with the framerate flag a bit when using ffmpeg as the frame capture rate might have been inaccurate
-
-// one major issue is that image quality with the editor screen at normal size is poor
-// if you want to get better pngs to work with, you can maximize the editor window on play
-// but then that causes issues because suddenly the captured frames are larger, which means
-// more data that needs to be processed, which means more time is needed, which means more lag :(
-//
-// e.g. encodeToPng kinda slows things down and then I saw
-// https://stackoverflow.com/questions/36186209/take-screenshot-in-unity3d-with-no-lags which
-// talked about using saving raw texture data before encoding, which I thought I could do after recording
-// all the frames but rawtexturedata is large (like mb vs kb for pngs)
-// framerate in the editor seemed better but there were some large lag spikes for some reason
-//
-// additionally, I couldn't figure out how I'd convert those saved textures to pngs after exiting play mode
-// in this script. maybe something to check out later to see if it's possible for fun (also maybe multithreading would help?) 
-//
-// but the built-in unity recorder works well enough. what's needed though is a slight delay before the audio plays,
-// which is fairly trivial via script. as for why though, 
-// this seems to explain well: https://forum.unity.com/threads/recorder-missing-the-first-few-frames-of-audio-when-driven-by-timeline.1116967/
-
-
-ffmpeg example with recorder.cs output:
-ffmpeg -framerate 10 -i frames/%d.png -i audio.wav -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -preset slow -crf 22 -pix_fmt yuv420p -b:a 128k output.mp4
