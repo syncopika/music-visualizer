@@ -3,13 +3,15 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-// edit: welp, this doesn't really work well. 
+// welp, this doesn't really work well. and the built-in recorder is fine (for my needs)
+//
 // one major issue is that image quality with the editor screen at normal size is poor
 // if you want to get better pngs to work with, you can maximize the editor window on play
 // but then that causes issues because suddenly the captured frames are larger, which means
 // more data that needs to be processed, which means more time is needed, which means more lag :(
+// (plus it potentially adds a huge memory expense by storing those images after capture. >_<)
 //
-// e.g. encodetopng kinda slows things down and then I saw
+// e.g. encodeToPng() kinda slows things down and then I saw
 // https://stackoverflow.com/questions/36186209/take-screenshot-in-unity3d-with-no-lags which
 // talked about using saving raw texture data before encoding, which I thought I could do after recording
 // all the frames but rawtexturedata is large (like mb vs kb for pngs)
@@ -26,6 +28,7 @@ using System.IO;
 // this script is for recording the editor on play (but needs to be stopped manually to stop capturing frames)
 // then you can use ffmpeg to combine the captured frames with audio to make a video.
 // how to use: attach to the Main Camera of a scene
+// ffmpeg -framerate 10 -i frames/%d.png -i audio.wav -c:v libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -preset slow -crf 22 -pix_fmt yuv420p -b:a 128k output.mp4
 
 // potentially helpful
 // https://docs.unity3d.com/ScriptReference/MonoBehaviour.FixedUpdate.html
