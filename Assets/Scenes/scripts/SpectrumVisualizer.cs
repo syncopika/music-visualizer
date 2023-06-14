@@ -145,6 +145,11 @@ public class SpectrumVisualizer : VisualizerMultiple
                     isAnimatingArray[particleIndex] = true;
                     if (orientation == VizOrientations.Horizontal)
                     {
+                        if(binValDelta >= 0.5f)
+                        {
+                            binValDelta = 0.5f;
+                        }
+
                         StartCoroutine(
                             scaleToTarget(
                                 currObj,
@@ -223,7 +228,10 @@ public class SpectrumVisualizer : VisualizerMultiple
         if (centerpoint)
         {
             xCoord = centerpoint.transform.position.x;
+            
             yCoord = centerpoint.transform.position.y;
+            yCoord -= 0.6f;
+
             zCoord = centerpoint.transform.position.z;
         }
 
@@ -244,6 +252,8 @@ public class SpectrumVisualizer : VisualizerMultiple
             if (visualizationStyle == VizStyles.Line) parent.transform.rotation = camera.transform.rotation;
         }
 
-        if (rotateY) parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 20f);
+        if (rotateY) parent.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * 5f);
+
+        centerpoint.transform.Rotate(new Vector3(1, 0, 0), Time.deltaTime * 5f);
     }
 }
