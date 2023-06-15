@@ -145,9 +145,9 @@ public class SpectrumVisualizer : VisualizerMultiple
                     isAnimatingArray[particleIndex] = true;
                     if (orientation == VizOrientations.Horizontal)
                     {
-                        if(binValDelta >= 0.5f)
+                        if(binValDelta >= 0.65f)
                         {
-                            binValDelta = 0.5f;
+                            binValDelta = 0.65f;
                         }
 
                         StartCoroutine(
@@ -230,7 +230,7 @@ public class SpectrumVisualizer : VisualizerMultiple
             xCoord = centerpoint.transform.position.x;
             
             yCoord = centerpoint.transform.position.y;
-            yCoord -= 0.6f;
+            yCoord -= 0.7f;
 
             zCoord = centerpoint.transform.position.z;
         }
